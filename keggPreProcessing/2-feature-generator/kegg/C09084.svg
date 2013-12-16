@@ -1,0 +1,164 @@
+<?xml version="1.0"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
+
+<svg fill-opacity="1" xmlns:xlink="http://www.w3.org/1999/xlink" color-rendering="auto" color-interpolation="auto" stroke="black" text-rendering="auto" stroke-linecap="square" width="266" stroke-miterlimit="10" stroke-opacity="1" shape-rendering="auto" fill="black" stroke-dasharray="none" font-weight="normal" stroke-width="1" height="175" xmlns="http://www.w3.org/2000/svg" font-family="&apos;Dialog&apos;" font-style="normal" stroke-linejoin="miter" font-size="12" stroke-dashoffset="0" image-rendering="auto">
+  <g>
+      <g text-rendering="optimizeLegibility" stroke-width="1.1" shape-rendering="geometricPrecision">
+        <line x1="87.988149" fill="none" y1="100.279624" x2="71.936675" y2="88.348564" />
+        <line x1="71.936675" fill="none" y1="88.348564" x2="124.861527" y2="69.580525" />
+        <line x1="114.192175" fill="none" y1="86.496936" x2="124.861527" y2="69.580525" />
+        <line x1="124.861527" fill="none" y1="69.580525" x2="144.247000" y2="74.500223" />
+        <line x1="108.653351" fill="none" y1="72.477656" x2="106.346487" y2="92.344170" />
+        <line x1="145.558530" fill="none" y1="94.457174" x2="126.983627" y2="101.871550" />
+        <line x1="106.346487" fill="none" y1="92.344170" x2="120.440446" y2="106.534319" />
+        <line x1="126.983627" fill="none" y1="101.871550" x2="114.192175" y2="86.496936" />
+        <line x1="120.440446" fill="none" y1="106.534319" x2="140.322191" y2="104.362630" />
+        <line x1="145.558530" fill="none" y1="94.457174" x2="144.247000" y2="74.500223" />
+        <line x1="160.874462" fill="none" y1="63.385930" x2="178.813453" y2="72.228587" />
+        <line x1="140.322191" fill="none" y1="104.362630" x2="151.020361" y2="87.464430" />
+        <line x1="144.479017" fill="none" y1="68.564409" x2="151.020361" y2="87.464430" />
+        <line x1="125.623924" fill="none" y1="61.894667" x2="144.479017" y2="68.564409" />
+        <line x1="178.813453" fill="none" y1="72.228587" x2="180.124983" y2="92.185538" />
+        <line x1="71.936675" fill="none" y1="88.348564" x2="81.730947" y2="105.786231" />
+        <line x1="115.198397" fill="none" y1="125.835120" x2="120.440446" y2="106.534319" />
+        <line x1="81.730947" fill="none" y1="105.786231" x2="115.198397" y2="125.835120" />
+        <line x1="126.983627" fill="none" y1="101.871550" x2="143.954199" y2="91.288561" />
+        <line x1="178.813453" fill="none" y1="72.228587" x2="195.440915" y2="61.114294" />
+        <line x1="143.954199" fill="none" y1="91.288561" x2="143.274348" y2="71.300119" />
+        <line x1="195.440915" fill="none" y1="61.114294" x2="212.068376" y2="50.000000" />
+        <line x1="143.274348" fill="none" y1="71.300119" x2="125.623924" y2="61.894667" />
+        <line x1="180.124983" fill="none" y1="92.185538" x2="198.063974" y2="101.028195" />
+        <line x1="160.874462" fill="none" y1="63.385930" x2="144.247000" y2="74.500223" />
+        <line x1="198.063974" fill="none" y1="101.028195" x2="216.002966" y2="109.870853" />
+        <line x1="125.623924" fill="none" y1="61.894667" x2="108.653351" y2="72.477656" />
+        <line x1="143.954199" fill="none" y1="91.288561" x2="161.604623" y2="100.694013" />
+        <line x1="180.124983" fill="none" y1="92.185538" x2="163.497521" y2="103.299832" />
+        <line x1="163.497521" fill="none" y1="103.299832" x2="145.558530" y2="94.457174" />
+        <line x1="81.730947" fill="none" y1="105.786231" x2="68.173336" y2="120.489673" />
+        <line x1="114.192175" fill="none" y1="86.496936" x2="108.653351" y2="72.477656" />
+        <line x1="68.173336" fill="none" y1="120.489673" x2="50.000000" y2="112.139232" />
+        <line x1="124.861527" fill="none" y1="69.580525" x2="50.000000" y2="112.139232" />
+        <line x1="106.346487" fill="none" y1="92.344170" x2="87.988149" y2="100.279624" />
+      </g>
+      <g font-size="15px" fill="white" text-rendering="optimizeLegibility" font-family="Helvetica" shape-rendering="geometricPrecision" stroke="rgb(0,0,0)">
+        <rect x="185" y="90" fill="white" width="15" height="11" stroke="none" />
+        <rect x="173" y="84" fill="white" width="15" height="16" stroke="none" />
+        <rect x="168" y="101" fill="white" width="15" height="11" stroke="none" />
+        <rect x="156" y="95" fill="white" width="15" height="16" stroke="none" />
+        <rect x="150" y="92" fill="white" width="15" height="11" stroke="none" />
+        <rect x="138" y="86" fill="white" width="15" height="16" stroke="none" />
+        <rect x="183" y="70" fill="white" width="15" height="11" stroke="none" />
+        <rect x="171" y="64" fill="white" width="15" height="16" stroke="none" />
+        <rect x="165" y="61" fill="white" width="15" height="11" stroke="none" />
+        <rect x="153" y="55" fill="white" width="15" height="16" stroke="none" />
+        <rect x="149" y="72" fill="white" width="15" height="11" stroke="none" />
+        <rect x="137" y="66" fill="white" width="15" height="16" stroke="none" />
+        <rect x="119" y="84" fill="white" width="15" height="11" stroke="none" />
+        <rect x="107" y="78" fill="white" width="15" height="16" stroke="none" />
+        <rect x="129" y="67" fill="white" width="15" height="11" stroke="none" />
+        <rect x="117" y="61" fill="white" width="15" height="16" stroke="none" />
+        <rect x="131" y="99" fill="white" width="15" height="11" stroke="none" />
+        <rect x="119" y="93" fill="white" width="15" height="16" stroke="none" />
+        <rect x="120" y="123" fill="white" width="15" height="11" stroke="none" />
+        <rect x="108" y="117" fill="white" width="15" height="16" stroke="none" />
+        <rect x="148" y="89" fill="white" width="15" height="11" stroke="none" />
+        <rect x="136" y="83" fill="white" width="15" height="16" stroke="none" />
+        <rect x="148" y="69" fill="white" width="15" height="11" stroke="none" />
+        <rect x="136" y="63" fill="white" width="15" height="16" stroke="none" />
+        <rect x="130" y="59" fill="white" width="15" height="11" stroke="none" />
+        <rect x="118" y="53" fill="white" width="15" height="16" stroke="none" />
+        <rect x="166" y="98" fill="white" width="15" height="11" stroke="none" />
+        <rect x="154" y="92" fill="white" width="15" height="16" stroke="none" />
+        <rect x="92" y="98" fill="white" width="15" height="11" stroke="none" />
+        <rect x="80" y="92" fill="white" width="15" height="16" stroke="none" />
+        <rect x="76" y="86" fill="white" width="15" height="11" stroke="none" />
+        <rect x="64" y="80" fill="white" width="15" height="16" stroke="none" />
+        <rect x="113" y="70" fill="white" width="15" height="11" stroke="none" />
+        <rect x="101" y="64" fill="white" width="15" height="16" stroke="none" />
+        <rect x="111" y="90" fill="white" width="15" height="11" stroke="none" />
+        <rect x="99" y="84" fill="white" width="15" height="16" stroke="none" />
+        <rect x="125" y="104" fill="white" width="15" height="11" stroke="none" />
+        <rect x="113" y="98" fill="white" width="15" height="16" stroke="none" />
+        <rect x="145" y="102" fill="white" width="15" height="11" stroke="none" />
+        <rect x="133" y="96" fill="white" width="15" height="16" stroke="none" />
+        <rect x="149" y="66" fill="white" width="15" height="11" stroke="none" />
+        <rect x="137" y="60" fill="white" width="15" height="16" stroke="none" />
+        <rect x="156" y="85" fill="white" width="15" height="11" stroke="none" />
+        <rect x="144" y="79" fill="white" width="15" height="16" stroke="none" />
+        <rect x="86" y="103" fill="white" width="15" height="11" stroke="none" />
+        <rect x="74" y="97" fill="white" width="15" height="16" stroke="none" />
+        <rect x="200" y="59" fill="white" width="15" height="11" stroke="none" />
+        <rect x="188" y="53" fill="white" width="15" height="16" stroke="none" />
+        <rect x="217" y="48" fill="white" width="15" height="11" stroke="none" />
+        <rect x="205" y="42" fill="white" width="15" height="16" stroke="none" />
+        <rect x="203" y="99" fill="white" width="15" height="11" stroke="none" />
+        <rect x="191" y="93" fill="white" width="15" height="16" stroke="none" />
+        <rect x="221" y="107" fill="white" width="15" height="11" stroke="none" />
+        <rect x="209" y="101" fill="white" width="15" height="16" stroke="none" />
+        <rect x="73" y="118" fill="white" width="15" height="11" stroke="none" />
+        <rect x="61" y="112" fill="white" width="15" height="16" stroke="none" />
+        <rect x="55" y="110" fill="white" width="15" height="11" stroke="none" />
+        <rect x="43" y="104" fill="white" width="15" height="16" stroke="none" />
+      </g>
+      <g font-size="15px" fill="rgb(0,0,0)" text-rendering="optimizeLegibility" font-family="Helvetica" shape-rendering="geometricPrecision" stroke="rgb(0,0,0)">
+        <text font-size="11px" fill="blue" xml:space="preserve" x="186" y="100" stroke="none">1</text>
+        <text fill="black" xml:space="preserve" x="175" y="97" stroke="none">C</text>
+        <text font-size="11px" fill="blue" xml:space="preserve" x="169" y="111" stroke="none">2</text>
+        <text fill="black" xml:space="preserve" x="158" y="108" stroke="none">C</text>
+        <text font-size="11px" fill="blue" xml:space="preserve" x="151" y="102" stroke="none">3</text>
+        <text fill="black" xml:space="preserve" x="140" y="99" stroke="none">C</text>
+        <text font-size="11px" fill="blue" xml:space="preserve" x="184" y="80" stroke="none">4</text>
+        <text fill="black" xml:space="preserve" x="173" y="77" stroke="none">C</text>
+        <text font-size="11px" fill="blue" xml:space="preserve" x="166" y="71" stroke="none">5</text>
+        <text fill="black" xml:space="preserve" x="155" y="68" stroke="none">C</text>
+        <text font-size="11px" fill="blue" xml:space="preserve" x="150" y="82" stroke="none">6</text>
+        <text fill="black" xml:space="preserve" x="139" y="79" stroke="none">C</text>
+        <text font-size="11px" fill="blue" xml:space="preserve" x="120" y="94" stroke="none">7</text>
+        <text fill="black" xml:space="preserve" x="109" y="91" stroke="none">C</text>
+        <text font-size="11px" fill="blue" xml:space="preserve" x="130" y="77" stroke="none">8</text>
+        <text fill="black" xml:space="preserve" x="119" y="74" stroke="none">C</text>
+        <text font-size="11px" fill="blue" xml:space="preserve" x="132" y="109" stroke="none">9</text>
+        <text fill="blue" xml:space="preserve" x="121" y="106" stroke="none">N</text>
+        <text font-size="11px" fill="blue" xml:space="preserve" x="121" y="133" stroke="none">10</text>
+        <text fill="black" xml:space="preserve" x="110" y="130" stroke="none">C</text>
+        <text font-size="11px" fill="blue" xml:space="preserve" x="149" y="99" stroke="none">11</text>
+        <text fill="black" xml:space="preserve" x="138" y="96" stroke="none">C</text>
+        <text font-size="11px" fill="blue" xml:space="preserve" x="149" y="79" stroke="none">12</text>
+        <text fill="black" xml:space="preserve" x="138" y="76" stroke="none">C</text>
+        <text font-size="11px" fill="blue" xml:space="preserve" x="131" y="69" stroke="none">13</text>
+        <text fill="black" xml:space="preserve" x="120" y="66" stroke="none">C</text>
+        <text font-size="11px" fill="blue" xml:space="preserve" x="167" y="108" stroke="none">14</text>
+        <text fill="red" xml:space="preserve" x="156" y="105" stroke="none">O</text>
+        <text font-size="11px" fill="blue" xml:space="preserve" x="93" y="108" stroke="none">15</text>
+        <text fill="black" xml:space="preserve" x="82" y="105" stroke="none">C</text>
+        <text font-size="11px" fill="blue" xml:space="preserve" x="77" y="96" stroke="none">16</text>
+        <text fill="black" xml:space="preserve" x="66" y="93" stroke="none">C</text>
+        <text font-size="11px" fill="blue" xml:space="preserve" x="114" y="80" stroke="none">17</text>
+        <text fill="black" xml:space="preserve" x="103" y="77" stroke="none">C</text>
+        <text font-size="11px" fill="blue" xml:space="preserve" x="112" y="100" stroke="none">18</text>
+        <text fill="black" xml:space="preserve" x="101" y="97" stroke="none">C</text>
+        <text font-size="11px" fill="blue" xml:space="preserve" x="126" y="114" stroke="none">19</text>
+        <text fill="black" xml:space="preserve" x="115" y="111" stroke="none">C</text>
+        <text font-size="11px" fill="blue" xml:space="preserve" x="146" y="112" stroke="none">20</text>
+        <text fill="black" xml:space="preserve" x="135" y="109" stroke="none">C</text>
+        <text font-size="11px" fill="blue" xml:space="preserve" x="150" y="76" stroke="none">21</text>
+        <text fill="red" xml:space="preserve" x="139" y="73" stroke="none">O</text>
+        <text font-size="11px" fill="blue" xml:space="preserve" x="157" y="95" stroke="none">22</text>
+        <text fill="black" xml:space="preserve" x="146" y="92" stroke="none">C</text>
+        <text font-size="11px" fill="blue" xml:space="preserve" x="87" y="113" stroke="none">23</text>
+        <text fill="blue" xml:space="preserve" x="76" y="110" stroke="none">N</text>
+        <text font-size="11px" fill="blue" xml:space="preserve" x="201" y="69" stroke="none">24</text>
+        <text fill="red" xml:space="preserve" x="190" y="66" stroke="none">O</text>
+        <text font-size="11px" fill="blue" xml:space="preserve" x="218" y="58" stroke="none">25</text>
+        <text fill="black" xml:space="preserve" x="207" y="55" stroke="none">C</text>
+        <text font-size="11px" fill="blue" xml:space="preserve" x="204" y="109" stroke="none">26</text>
+        <text fill="red" xml:space="preserve" x="193" y="106" stroke="none">O</text>
+        <text font-size="11px" fill="blue" xml:space="preserve" x="222" y="117" stroke="none">27</text>
+        <text fill="black" xml:space="preserve" x="211" y="114" stroke="none">C</text>
+        <text font-size="11px" fill="blue" xml:space="preserve" x="74" y="128" stroke="none">32</text>
+        <text fill="black" xml:space="preserve" x="63" y="125" stroke="none">C</text>
+        <text font-size="11px" fill="blue" xml:space="preserve" x="56" y="120" stroke="none">33</text>
+        <text fill="black" xml:space="preserve" x="45" y="117" stroke="none">C</text>
+      </g>
+  </g>
+</svg>
