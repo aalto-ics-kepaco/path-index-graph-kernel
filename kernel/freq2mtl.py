@@ -59,13 +59,12 @@ f.close()
 
 for i in range(len(reacs)):
 	r = reacs[i][:-4]
-	words = r.split("_")
-	reacs[i] = words[0] + "_" + words[2] + "_" + words[1] # changes e.g. R00004_0_b to R00004_b_0
+	reacs[i] = r # clemens: changed this because I don't know why the identifiers below should be swapped
+	#words = r.split("_")
+	#reacs[i] = words[0] + "_" + words[2] + "_" + words[1] # changes e.g. R00004_0_b to R00004_b_0
 
 # reaction dictionary
 reacdict = dict((r, i+1) for i,r in enumerate(reacs))
-
-print "#-debug-clemens-# reacdict: " + str(reacdict)
 
 # start writing sparse matlab matrices
 g = open(prefix + ".mtl", "w")
@@ -105,12 +104,10 @@ for i,line in enumerate(lines):
 		r,c = w.split(":")
 
 
-		print "#-debug-clemens-# reacdict: " + str(reacdict)
-
-		print "#-debug-clemens-# graph r: " + str(r)
-		print "#-debug-clemens-# freq c: " + str(c)
-
-		print "#-debug-clemens-# reacdict[r]: " + str(reacdict[r])
+		#print "#-debug-clemens-# reacdict: " + str(reacdict)
+		#print "#-debug-clemens-# graph r: " + str(r)
+		#print "#-debug-clemens-# freq c: " + str(c)
+		#print "#-debug-clemens-# reacdict[r]: " + str(reacdict[r])
 
 		g.write("%d %d %s\n" % (i+1,reacdict[r],c))
 		gi.write("%d %d %s\n" % (i+1,reacdict[r],c))
