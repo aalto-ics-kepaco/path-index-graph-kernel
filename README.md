@@ -1,20 +1,43 @@
 path-index-graph-kernel
 =======================
 
-An implementation of an efficient graph kernel using a compressed path index.
+An implementation of an efficient graph kernel using a compressed path index. 
 
-Currently this is only working for the [KEGG dataset](http://www.genome.jp/kegg/) but the aim is to generalize this to any graph dataset. 
+Contents
+--------
 
-#### About the repository contents
+* algorithm - The implementation of the algorithm to be used with .sdf or .mol files as input
+* build.sh - A script that builds / compiles all the used scripts for the current system
+* examples - Example use cases for the algorithm
+    * keggReactionPrediction - Prediction of reaction ec numbers using the [KEGG dataset](http://www.genome.jp/kegg/)
+* README.md - This readme
 
-* keggPreProcessing - The preprocessing steps to use the method with the KEGG dataset
-* treeBorrowsWheelerTransform - The tree borrows-wheeler transform to convert path listings that were extracted from graphs into path frequencies
-* kernel - a python script to convert the TBWT results into .mtl files and a matlab script to generate various kernels
+Usage
+-----
 
-Usage for KEGG
---------------
+** Prerequisites **
 
-First make sure you have python, java and a c++ compiler up and running on your system. Then build keggPreProcessing/3-atommapper and keggPreProcessing/4-trie-generator for Java and treeBorrowsWheelerTransform with make (you'll need the builder and traverse).
+* python
+* java 
+* a c++ compiler
+* matlab for some of the examples
+
+** Building **
+
+First you need to build / compile some of the files to be used on your system. The script `build.sh` does all this for you, just run it once and everything should be in place.
+
+** Running the algorithm **
+
+The algorithm currently only supports .sdf (e.g. PubChem) and .mol files (e.g. KEGG) as input graphs. Running the wrapper script (`python runAlgorithm.py`) in the `algorithm` directory  
+
+Examples
+--------
+
+
+Old stuff below this line
+________________________________
+
+
 
 #### keggPreProcessing/1-reaction-list
 
