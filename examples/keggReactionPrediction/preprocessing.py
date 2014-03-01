@@ -9,8 +9,8 @@ import subprocess
 
 # parse command line arguments
 def parseargs():
-	parser = argparse.ArgumentParser(description='Preprocess kegg files.'
-		+ ' Results are stored in folder' + os.path.abspath(outputdir))
+	parser = argparse.ArgumentParser(description='Preprocess kegg files'
+		+ ' for use with path-index-graph-kernel algorithm.')
 	parser.add_argument('-k', '--keggpath', type=str, dest='keggpath', 
 		required=True, help='path to kegg ligand database')
 	parser.add_argument('-v', '--verbose', dest='verbose', action='store_true',
@@ -62,14 +62,14 @@ if __name__ == '__main__':
 	# check if output dir exists
 	if (os.path.isdir(outputdir)):
 		if (force):
-			print "Directory \"" + os.path.abspath(outputdir) 
-				+ "\" for storing results exists already and will be "
-				+ "overwritten since force overwrite was set."
+			print ('Directory "' + outputdir 
+				+ '/ for storing results exists already and will be '
+				+ 'overwritten since force overwrite was set.')
 			shutil.rmtree(outputdir)
 		else: 
-			print "Directory \"" + os.path.abspath(outputdir) 
-				+ "\" for storing results exists already, aborting."
-				sys.exit(1)
+			print ('Directory "' + outputdir 
+				+ '" for storing results exists already, aborting.')
+			sys.exit(1)
 
 	# create temp dir
 	print "Writing results in dir: " + outputdir
