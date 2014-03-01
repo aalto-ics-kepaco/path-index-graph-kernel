@@ -1,1 +1,11 @@
 .DS_Store
+*.pyc
+*.o
+
+algorithm/treeBorrowsWheelerTransform/builder
+algorithm/treeBorrowsWheelerTransform/checkresult
+algorithm/treeBorrowsWheelerTransform/queries
+algorithm/treeBorrowsWheelerTransform/resultconvert
+algorithm/treeBorrowsWheelerTransform/tconvert
+algorithm/treeBorrowsWheelerTransform/test
+algorithm/treeBorrowsWheelerTransform/traverse

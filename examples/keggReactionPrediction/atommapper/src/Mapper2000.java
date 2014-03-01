@@ -256,12 +256,13 @@ public class Mapper2000
 			time = r.computeMappings(alg);
 		} catch (Exception e)
 		{
+			System.out.println("Could not compute Mappings");
 			System.out.println(e.getMessage());
 		}
 		
 		if (r.getMappings().size() == 0)
 		{
-//			System.out.println("Not enough memory");
+			System.out.println("Not enough memory");
 			return;
 		}
 
