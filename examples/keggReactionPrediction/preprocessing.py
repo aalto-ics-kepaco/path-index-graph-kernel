@@ -3,9 +3,7 @@
 #
 # @author Clemens Westrup
 
-import argparse
-import os, errno, shutil, sys
-import subprocess
+import os, errno, shutil, sys, argparse, time, subprocess
 
 # parse command line arguments
 def parseargs():
@@ -48,6 +46,8 @@ if __name__ == '__main__':
 	print ""
 	print "--- preprocessing kegg data for path index graph kernel ---"
 	print ""
+
+	time.sleep(1) # delay for stout output
 
 	# remove ending slash on path if existing
 	if keggpath.endswith('/'):
@@ -112,9 +112,9 @@ if __name__ == '__main__':
 	os.chdir("./atommapper/bin");
 	p = subprocess.Popen(
 		'java Mapper2000 -rgraphs -moldir ' + keggpath + '/mol/ '
-		+ '-featdir ../../' + molfeaturesdir + '/ '
-		+ '-reacfile ../../' + outputdir + '/kegg-reactions.txt ' 
-		+ '-output ../../' + reactiongraphsdir + '/',
+		+ '-featdir ' + molfeaturesdir + '/ '
+		+ '-reacfile ' + outputdir + '/kegg-reactions.txt ' 
+		+ '-output ' + reactiongraphsdir + '/',
 		shell=True, stdout=OUTPUT)
 	p.wait()
 	if p.returncode != 0:
