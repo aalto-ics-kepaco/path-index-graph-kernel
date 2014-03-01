@@ -14,7 +14,8 @@ reactiongraphsdir = outputdir + "/reaction-graphs"
 
 # parse command line arguments
 def parseargs():
-	parser = argparse.ArgumentParser(description='Preprocess kegg files.')
+	parser = argparse.ArgumentParser(description='Preprocess kegg files.'
+		+ ' Results are stored in folder' + os.path.abspath(outputdir))
 	parser.add_argument('-k', '--keggpath', type=str, dest='keggpath', 
 		required=True, help='path to kegg ligand database')
 	parser.add_argument('-v', '--verbose', dest='verbose', action='store_true',
@@ -36,7 +37,6 @@ if __name__ == '__main__':
 	[keggpath, verbose] = parseargs()
 
 	keggpath = os.path.abspath(keggpath)
-	print keggpath
 
 	print ""
 	print "--- preprocessing kegg data for path index graph kernel ---"
@@ -54,8 +54,8 @@ if __name__ == '__main__':
 
 	# check if output dir exists
 	if (os.path.isdir(outputdir)):
-		print "Directory \"" + outputdir + "\" for storing results exists already."
-		overwrite = raw_input("Press enter to overwrite or crtl+c to abort.")
+		print "Directory \"" + os.path.abspath(outputdir) 
+			+ "\" for storing results exists already and will be overwritten."
 		shutil.rmtree(outputdir)
 
 	# create temp dir
@@ -108,4 +108,4 @@ if __name__ == '__main__':
 		sys.exit(1)
 
 	print("All done. Reaction graph .mol files can be "
-		+ "found in " + reactiongraphsdir)
+		+ "found in " + os.path.abspath(reactiongraphsdir))
