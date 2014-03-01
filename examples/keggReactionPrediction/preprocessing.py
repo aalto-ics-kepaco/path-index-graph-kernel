@@ -7,11 +7,6 @@ import argparse
 import os, errno, shutil, sys
 import subprocess
 
-# constants
-outputdir = "results"
-molfeaturesdir = outputdir + "/mol-features"
-reactiongraphsdir = outputdir + "/reaction-graphs"
-
 # parse command line arguments
 def parseargs():
 	parser = argparse.ArgumentParser(description='Preprocess kegg files.'
@@ -20,8 +15,13 @@ def parseargs():
 		required=True, help='path to kegg ligand database')
 	parser.add_argument('-v', '--verbose', dest='verbose', action='store_true',
 		help='show verbose information')
+	parser.add_argument('-o', '--output', type=str, dest='output', 
+		required=True, help='path to store output results')
+	parser.add_argument('-f', '--force', dest='force', action='store_true',
+		help='force overwrite if output dir exists already')
+
 	args = parser.parse_args()
-	return [args.keggpath, args.verbose]
+	return args
 
 # mkdir -p
 def mkdir_p(path):
@@ -34,9 +34,16 @@ def mkdir_p(path):
 
 # main function
 if __name__ == '__main__':
-	[keggpath, verbose] = parseargs()
+	args = parseargs()
 
-	keggpath = os.path.abspath(keggpath)
+	# read arguments
+	verbose = args.verbose
+	force = args.force
+	keggpath = os.path.abspath(args.keggpath)
+	outputdir = os.path.abspath(args.output)
+
+	molfeaturesdir = outputdir + "/mol-features"
+	reactiongraphsdir = outputdir + "/reaction-graphs"
 
 	print ""
 	print "--- preprocessing kegg data for path index graph kernel ---"
@@ -54,9 +61,15 @@ if __name__ == '__main__':
 
 	# check if output dir exists
 	if (os.path.isdir(outputdir)):
-		print "Directory \"" + os.path.abspath(outputdir) 
-			+ "\" for storing results exists already and will be overwritten."
-		shutil.rmtree(outputdir)
+		if (force):
+			print "Directory \"" + os.path.abspath(outputdir) 
+				+ "\" for storing results exists already and will be "
+				+ "overwritten since force overwrite was set."
+			shutil.rmtree(outputdir)
+		else: 
+			print "Directory \"" + os.path.abspath(outputdir) 
+				+ "\" for storing results exists already, aborting."
+				sys.exit(1)
 
 	# create temp dir
 	print "Writing results in dir: " + outputdir
