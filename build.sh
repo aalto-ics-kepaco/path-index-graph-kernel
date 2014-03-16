@@ -17,8 +17,8 @@ TRIEGENERATORPATH=$FILE_PATH/algorithm/trie-generator
 javac -d $TRIEGENERATORPATH/bin -cp $TRIEGENERATORPATH/src/mechanism/ \
 -sourcepath $TRIEGENERATORPATH/src $TRIEGENERATORPATH/src/TrieGenerator.java
 
-echo "building treeBorrowsWheelerTransform"
-TBWTPATH=$FILE_PATH/algorithm/treeBorrowsWheelerTransform
+echo "building treeBurrowsWheelerTransform"
+TBWTPATH=$FILE_PATH/algorithm/treeBurrowsWheelerTransform
 cd $TBWTPATH
 make clean
 make all
