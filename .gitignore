@@ -2,10 +2,10 @@
 *.pyc
 *.o
 
-algorithm/treeBorrowsWheelerTransform/builder
-algorithm/treeBorrowsWheelerTransform/checkresult
-algorithm/treeBorrowsWheelerTransform/queries
-algorithm/treeBorrowsWheelerTransform/resultconvert
-algorithm/treeBorrowsWheelerTransform/tconvert
-algorithm/treeBorrowsWheelerTransform/test
-algorithm/treeBorrowsWheelerTransform/traverse
+algorithm/treeBurrowsWheelerTransform/builder
+algorithm/treeBurrowsWheelerTransform/checkresult
+algorithm/treeBurrowsWheelerTransform/queries
+algorithm/treeBurrowsWheelerTransform/resultconvert
+algorithm/treeBurrowsWheelerTransform/tconvert
+algorithm/treeBurrowsWheelerTransform/test
+algorithm/treeBurrowsWheelerTransform/traverse
