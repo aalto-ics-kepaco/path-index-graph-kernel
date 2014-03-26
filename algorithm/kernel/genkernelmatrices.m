@@ -1,4 +1,4 @@
-function [] = genkernelmatrices()
+function [] = genkernelmatrices(mtldir, outputdir, eccodes)
 %
 % generates following kernel matrices out of the suffix tree sparse data:
 %
@@ -18,9 +18,6 @@ function [] = genkernelmatrices()
 %
 %
 
-MTLDIR = '/group/home/icomic/data/pathkernels/rgraphs/suffix/';
-OUTPUTDIR = '/group/home/icomic/data/pathkernels/rgraphs/';
-
 
 % normalization function
 normalize = @(K) K ./ sqrt(diag(K)*diag(K)');
@@ -31,7 +28,7 @@ validkernel = @(K) max(K(:)) < 1.001 & min(eig(K)) > -0.0001;
 
 
 % read ec-codes
-ecs = dlmread('../ec-prediction/eccodes.mat');
+ecs = dlmread(eccodes);
 % get non-zero ecs
 inds = find(ecs(:,1) > 0);
 % take forward and backward reactions separately
@@ -58,13 +55,13 @@ CAc = cell(50,3);
 tic;
 % read data length-wise
 for i=minlen:maxlen
-  temp = load(strcat(MTLDIR, 'result-kegg_', num2str(i), '.mtl'));
+  temp = load(strcat(mtldir, 'result-kegg_', num2str(i), '.mtl'));
   CA{i,1} = sparse(NN, D);
   CA{i,1} = spconvert(temp)';
   CA{i,2} = CA{i,1}(forwards,:);
   CA{i,3} = CA{i,1}(backwards,:);
   
-  temp = load(strcat(MTLDIR, 'result-kegg-core_', num2str(i), '.mtl'));
+  temp = load(strcat(mtldir, 'result-kegg-core_', num2str(i), '.mtl'));
   CAc{i,1} = sparse(NN,D);
   CAc{i,1} = spconvert(temp)';
   CAc{i,2} = CAc{i,1}(forwards,:);
@@ -119,36 +116,36 @@ for l=[15,50]
      
 %     % 'f'
 %     K = normalize(Kff);
-%     filename = strcat(OUTPUTDIR, sprintf('%s_%d_%d_%s_f_1.kernel', paths{1},l,round(lambda*100), dp{1}));
+%     filename = strcat(outputdir, sprintf('%s_%d_%d_%s_f_1.kernel', paths{1},l,round(lambda*100), dp{1}));
 %     dlmwrite(filename, K);
 %     K = normalize(K.^2);
-%     filename = strcat(OUTPUTDIR, sprintf('%s_%d_%d_%s_f_2.kernel', paths{1},l,round(lambda*100), dp{1}));
+%     filename = strcat(outputdir, sprintf('%s_%d_%d_%s_f_2.kernel', paths{1},l,round(lambda*100), dp{1}));
 %     dlmwrite(filename, K);
      
 %     % 'fb'
 %     K = Kfb ./ sqrt(diag(Kbb)*diag(Kff)');
-%     filename = strcat(OUTPUTDIR, sprintf('%s_%d_%d_%s_fb_1.kernel', paths{1},l,round(lambda*100), dp{1}));
+%     filename = strcat(outputdir, sprintf('%s_%d_%d_%s_fb_1.kernel', paths{1},l,round(lambda*100), dp{1}));
 %     dlmwrite(filename, K);
 %     K = K.^2;
-%     filename = strcat(OUTPUTDIR, sprintf('%s_%d_%d_%s_fb_2.kernel', paths{1},l,round(lambda*100), dp{1}));
+%     filename = strcat(outputdir, sprintf('%s_%d_%d_%s_fb_2.kernel', paths{1},l,round(lambda*100), dp{1}));
 %     dlmwrite(filename, K);
      
      % 'tensor'
 %     K = normalize(Kff.*Kbb + Kfb.*Kbf + Kbf.*Kfb + Kbb.*Kff);
 %%     K = normalize(normalize(Kff) .* normalize(Kbb));
-%     filename = strcat(OUTPUTDIR, sprintf('%s_%d_%d_%s_tensor_1.kernel', paths{1},l,round(lambda*100), dp{1}));
+%     filename = strcat(outputdir, sprintf('%s_%d_%d_%s_tensor_1.kernel', paths{1},l,round(lambda*100), dp{1}));
 %     dlmwrite(filename, K);
 %     K = normalize(K.^2);
-%     filename = strcat(OUTPUTDIR, sprintf('%s_%d_%d_%s_tensor_2.kernel', paths{1},l,round(lambda*100), dp{1}));
+%     filename = strcat(outputdir, sprintf('%s_%d_%d_%s_tensor_2.kernel', paths{1},l,round(lambda*100), dp{1}));
 %     dlmwrite(filename, K);
      
      % 'max'
 %     Kcross = Kfb ./ sqrt(diag(Kbb)*diag(Kff)');
 %     K = normalize(max(max(Kff, Kbb), Kfb));
-%     filename = strcat(OUTPUTDIR, sprintf('%s_%d_%d_%s_max_1.kernel', paths{1},l,round(lambda*100), dp{1}));
+%     filename = strcat(outputdir, sprintf('%s_%d_%d_%s_max_1.kernel', paths{1},l,round(lambda*100), dp{1}));
 %     dlmwrite(filename, K);
 %     K = normalize(K.^2);
-%     filename = strcat(OUTPUTDIR, sprintf('%s_%d_%d_%s_max_2.kernel', paths{1},l,round(lambda*100), dp{1}));
+%     filename = strcat(outputdir, sprintf('%s_%d_%d_%s_max_2.kernel', paths{1},l,round(lambda*100), dp{1}));
 %     dlmwrite(filename, K);
      
     end
