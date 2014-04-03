@@ -93,7 +93,7 @@ if __name__ == '__main__':
 	print "Creating dir " + molfeaturesdir
 	mkdir_p(molfeaturesdir)
 	# create atom features from KEGG mol files
-	print "Create atom features from KEGG mol files ..."
+	print "Creating atom features from KEGG mol files ..."
 	p = subprocess.Popen(
 		'python feature-generator/generator2011.py ' + keggpath + '/mol/*'
 		+ ' -k all --output-dir ' + molfeaturesdir + '/',
@@ -116,6 +116,18 @@ if __name__ == '__main__':
 		+ '-reacfile ' + outputdir + '/kegg-reactions.txt ' 
 		+ '-output ' + reactiongraphsdir + '/',
 		shell=True, stdout=OUTPUT)
+	p.wait()
+	if p.returncode != 0:
+		sys.exit(1)
+
+	### extract label matrix
+
+	# Create reactiongraph mol files with atommapper
+	print "Extracting label matrix into file \"labels\""
+	os.chdir("../../extractlabels");
+	p = subprocess.Popen(
+		'python extractlabels.py -k ' + keggpath + ' -r ' + reactiongraphsdir 
+		+ ' -o ' + outputdir + '/labels -f', shell=True, stdout=OUTPUT)
 	p.wait()
 	if p.returncode != 0:
 		sys.exit(1)
