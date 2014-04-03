@@ -97,7 +97,7 @@ if __name__ == '__main__':
             # extract ec numbers if currently reading those
             if reading_ecnumbers:
                 try:
-                    ecnumbers.extend(re.findall('[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+', line))
+                    ecnumbers.extend(re.findall('([0-9]+|-)\.([0-9]+|-)\.([0-9]+|-)\.([0-9]+|-)', line))
                 except AttributeError:
                     pass
 
