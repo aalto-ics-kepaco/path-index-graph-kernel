@@ -91,13 +91,14 @@ if __name__ == '__main__':
             elif re.match('ENZYME', line):
                 reading_ecnumbers = True
                 ecnumbers = []
-            elif re.match('(ORTHOLOGY)|(///)', line):
+            elif re.match('(ORTHOLOGY)|(///)|(REFERENCE)', line):
                 reading_ecnumbers = False
                 ecnumbers_read = True
             # extract ec numbers if currently reading those
             if reading_ecnumbers:
                 try:
-                    ecnumbers.extend(re.findall('([0-9]+|-)\.([0-9]+|-)\.([0-9]+|-)\.([0-9]+|-)', line))
+                    new_ecnumbers = re.findall(r"((?:(?:\d+|-)\.){3}(?:\d+|-))", line)
+                    ecnumbers.extend(new_ecnumbers)
                 except AttributeError:
                     pass
 
