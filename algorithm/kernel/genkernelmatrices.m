@@ -14,17 +14,12 @@ function [] = genkernelmatrices(mtldir, outputdir, eccodes)
 %  l={15,50}, lambda={0.90}, dp={bin,dp}, order={lin,quad}, type={f,fb,tensor,max}, paths={all,core}
 %  results in 2*2*2*4*2=64 kernels
 %
-%
-%
-%
-
 
 % normalization function
 normalize = @(K) K ./ sqrt(diag(K)*diag(K)');
 
 % test function
 validkernel = @(K) max(K(:)) < 1.001 & min(eig(K)) > -0.0001;
-
 
 
 % read ec-codes
@@ -38,10 +33,15 @@ backwards = inds(2:2:length(inds));
 %ecs = ecs(inds,:);
 ecs = ecs(forwards,:);
 
+% NNN = 17430;
+% NN = 15566; % graphs
+% N = 7783;
+% D = 20665838; % features
+
 NNN = 17430;
-NN = 15566; % graphs
-N = 7783;
-D = 20665838; % features
+NN = 13496; % graphs
+N = 6748;
+D = 8120907; % features
 minlen = 1;
 maxlen = 50;
 
@@ -55,13 +55,13 @@ CAc = cell(50,3);
 tic;
 % read data length-wise
 for i=minlen:maxlen
-  temp = load(strcat(mtldir, 'result-kegg_', num2str(i), '.mtl'));
+  temp = load(strcat(mtldir, 'result_', num2str(i), '.mtl'));
   CA{i,1} = sparse(NN, D);
   CA{i,1} = spconvert(temp)';
   CA{i,2} = CA{i,1}(forwards,:);
   CA{i,3} = CA{i,1}(backwards,:);
   
-  temp = load(strcat(mtldir, 'result-kegg-core_', num2str(i), '.mtl'));
+  temp = load(strcat(mtldir, 'result-core_', num2str(i), '.mtl'));
   CAc{i,1} = sparse(NN,D);
   CAc{i,1} = spconvert(temp)';
   CAc{i,2} = CAc{i,1}(forwards,:);
@@ -111,42 +111,42 @@ for l=[15,50]
      toc
      
      % normalization of crossdirections: 
-     % Kfb = Kfb ./ sqrt(diag(Kbb)*diag(Kff)'); 
-     % Kbf = Kfb ./ sqrt(diag(Kff)*diag(Kbb)');
+     Kfb = Kfb ./ sqrt(diag(Kbb)*diag(Kff)'); 
+     Kbf = Kfb ./ sqrt(diag(Kff)*diag(Kbb)');
      
 %     % 'f'
-%     K = normalize(Kff);
-%     filename = strcat(outputdir, sprintf('%s_%d_%d_%s_f_1.kernel', paths{1},l,round(lambda*100), dp{1}));
-%     dlmwrite(filename, K);
-%     K = normalize(K.^2);
-%     filename = strcat(outputdir, sprintf('%s_%d_%d_%s_f_2.kernel', paths{1},l,round(lambda*100), dp{1}));
-%     dlmwrite(filename, K);
+     K = normalize(Kff);
+     filename = strcat(outputdir, sprintf('%s_%d_%d_%s_f_1.kernel', paths{1},l,round(lambda*100), dp{1}));
+     dlmwrite(filename, K);
+     K = normalize(K.^2);
+     filename = strcat(outputdir, sprintf('%s_%d_%d_%s_f_2.kernel', paths{1},l,round(lambda*100), dp{1}));
+     dlmwrite(filename, K);
      
 %     % 'fb'
-%     K = Kfb ./ sqrt(diag(Kbb)*diag(Kff)');
-%     filename = strcat(outputdir, sprintf('%s_%d_%d_%s_fb_1.kernel', paths{1},l,round(lambda*100), dp{1}));
-%     dlmwrite(filename, K);
-%     K = K.^2;
-%     filename = strcat(outputdir, sprintf('%s_%d_%d_%s_fb_2.kernel', paths{1},l,round(lambda*100), dp{1}));
-%     dlmwrite(filename, K);
+    K = Kfb ./ sqrt(diag(Kbb)*diag(Kff)');
+    filename = strcat(outputdir, sprintf('%s_%d_%d_%s_fb_1.kernel', paths{1},l,round(lambda*100), dp{1}));
+    dlmwrite(filename, K);
+    K = K.^2;
+    filename = strcat(outputdir, sprintf('%s_%d_%d_%s_fb_2.kernel', paths{1},l,round(lambda*100), dp{1}));
+    dlmwrite(filename, K);
      
      % 'tensor'
-%     K = normalize(Kff.*Kbb + Kfb.*Kbf + Kbf.*Kfb + Kbb.*Kff);
-%%     K = normalize(normalize(Kff) .* normalize(Kbb));
-%     filename = strcat(outputdir, sprintf('%s_%d_%d_%s_tensor_1.kernel', paths{1},l,round(lambda*100), dp{1}));
-%     dlmwrite(filename, K);
-%     K = normalize(K.^2);
-%     filename = strcat(outputdir, sprintf('%s_%d_%d_%s_tensor_2.kernel', paths{1},l,round(lambda*100), dp{1}));
-%     dlmwrite(filename, K);
+    K = normalize(Kff.*Kbb + Kfb.*Kbf + Kbf.*Kfb + Kbb.*Kff);
+%    K = normalize(normalize(Kff) .* normalize(Kbb));
+    filename = strcat(outputdir, sprintf('%s_%d_%d_%s_tensor_1.kernel', paths{1},l,round(lambda*100), dp{1}));
+    dlmwrite(filename, K);
+    K = normalize(K.^2);
+    filename = strcat(outputdir, sprintf('%s_%d_%d_%s_tensor_2.kernel', paths{1},l,round(lambda*100), dp{1}));
+    dlmwrite(filename, K);
      
      % 'max'
-%     Kcross = Kfb ./ sqrt(diag(Kbb)*diag(Kff)');
-%     K = normalize(max(max(Kff, Kbb), Kfb));
-%     filename = strcat(outputdir, sprintf('%s_%d_%d_%s_max_1.kernel', paths{1},l,round(lambda*100), dp{1}));
-%     dlmwrite(filename, K);
-%     K = normalize(K.^2);
-%     filename = strcat(outputdir, sprintf('%s_%d_%d_%s_max_2.kernel', paths{1},l,round(lambda*100), dp{1}));
-%     dlmwrite(filename, K);
+    Kcross = Kfb ./ sqrt(diag(Kbb)*diag(Kff)');
+    K = normalize(max(max(Kff, Kbb), Kfb));
+    filename = strcat(outputdir, sprintf('%s_%d_%d_%s_max_1.kernel', paths{1},l,round(lambda*100), dp{1}));
+    dlmwrite(filename, K);
+    K = normalize(K.^2);
+    filename = strcat(outputdir, sprintf('%s_%d_%d_%s_max_2.kernel', paths{1},l,round(lambda*100), dp{1}));
+    dlmwrite(filename, K);
      
     end
  end
