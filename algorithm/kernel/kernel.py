@@ -90,7 +90,8 @@ if __name__ == '__main__':
             if (not re.match(r"^\S*(?:\s\S*){0," + str(args.common) + "}$", item)):
                 new_tbwt_list.append(item)
 
-        logger.debug(str(len(tbwt_list)-len(new_tbwt_list)) + " paths removed "
+        logger.debug(str(len(tbwt_list)-len(new_tbwt_list)) +
+            " of " + str(len(tbwt_list)) + " paths removed " +
             "that are shared between <= " + str(args.common) + " graphs.")
         tbwt_list = new_tbwt_list
 
