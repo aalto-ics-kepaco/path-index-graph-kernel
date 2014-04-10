@@ -24,7 +24,7 @@ def parseargs():
         help='show verbose information')
     parser.add_argument('-f', '--force', dest='force', action='store_true',
         help='force overwrite if output dir exists already')
-    parser.add_argument('-m', '--mincommon', type=int, dest='mincommon', 
+    parser.add_argument('-c', '--common', type=int, dest='common', 
         help='only take paths into consideration that are shared between more '
         'than {mincommon} graphs')
 
