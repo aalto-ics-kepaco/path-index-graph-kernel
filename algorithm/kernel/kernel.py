@@ -26,7 +26,7 @@ def parseargs():
         help='force overwrite if output dir exists already')
     parser.add_argument('-c', '--common', type=int, dest='common', 
         help='only take paths into consideration that are shared between more '
-        'than {mincommon} graphs')
+        'than {common} graphs')
 
     args = parser.parse_args()
     return args
@@ -84,14 +84,14 @@ if __name__ == '__main__':
         tbwt_list = tbwtresultfile.read().splitlines()
 
     # if common parameter is set remove all paths with only one graph listed
-    if (args.mincommon):
+    if (args.common):
         new_tbwt_list = []
         for item in tbwt_list:
-            if (not re.match(r"^\S*(?:\s\S*){0," + str(args.mincommon) + "}$", item)):
+            if (not re.match(r"^\S*(?:\s\S*){0," + str(args.common) + "}$", item)):
                 new_tbwt_list.append(item)
 
         logger.debug(str(len(tbwt_list)-len(new_tbwt_list)) + " paths removed "
-            "that are shared between <= " + str(args.mincommon) + " graphs.")
+            "that are shared between <= " + str(args.common) + " graphs.")
         tbwt_list = new_tbwt_list
 
     # open output feature file to write feature map
