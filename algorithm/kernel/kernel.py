@@ -73,30 +73,36 @@ if __name__ == '__main__':
     with open(args.tbwtresult, 'r') as tbwtresultfile:
         tbwt_list = tbwtresultfile.read().splitlines()
 
-    # iterate over all graphs listed in the directory
-    for i in range(len(graph_list)):
+    # open output feature file to write feature map
+    with open(args.output + "/pathkernel_features", 'w') as featurefile:
 
-        # remove file name extension
-        graph_list[i] = os.path.splitext(graph_list[i])[0]
-        graph = graph_list[i]
+        # iterate over all graphs listed in the directory
+        for i in range(len(graph_list)):
 
-        # ignore hidden files / files with names starting with .
-        if graph[0] == ".":
-            continue
+            # new line in features output file for the new graph
+            output_line = ""
 
-        # for each reaction check the frequencies of each path
-        for line in tbwt_list:
-            # if graph name is found in this line extract frequency
-            matches = re.search(graph + r':\d', line)
-            if matches:
-                matches_list = matches.group(0)
-                # get frequency by removing graph name + one char for ":"
-                frequency = int(matches_list[len(graph)+1:])
-                logger.debug(graph + ": " + str(frequency))
-            else: 
-                logger.debug(graph + ": no match")
+            # remove file name extension
+            graph_list[i] = os.path.splitext(graph_list[i])[0]
+            graph = graph_list[i]
 
+            # ignore hidden files / files with names starting with .
+            if graph[0] == ".":
+                continue
 
+            # for each reaction get the frequencies of each path
+            for line in tbwt_list:
+                # if graph name is found in this line  extract frequency
+                matches = re.search(graph + r':\d', line)
+                if matches:
+                    matches_list = matches.group(0)
+                    # get frequency by removing graph name + one char for ":"
+                    frequency = int(matches_list[len(graph)+1:])
+                    output_line += str(frequency) + " "
+                else: 
+                    output_line += "0 "
 
-    logger.debug(graph_list)
+            # write line with path frequencies / features for graph i
+            output_line = output_line[:-1] + "\n"
+            featurefile.write(output_line)
 
