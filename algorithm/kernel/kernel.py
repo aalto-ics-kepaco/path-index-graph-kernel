@@ -76,9 +76,6 @@ if __name__ == '__main__':
         # read all graphs and sort them in alphanumerical order
         graph_list = sorted(os.listdir(graphpath))
 
-    logger.debug("Used graphs:")
-    logger.debug(graph_list)
-
     # read tbwt results file and convert it to a list of lines
     with open(args.tbwtresult, 'r') as tbwtresultfile:
         tbwt_list = tbwtresultfile.read().splitlines()
