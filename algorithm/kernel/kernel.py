@@ -12,8 +12,9 @@ def parseargs():
         'in alphanumerical order of graph filenames so labels should be too.')
     parser.add_argument('-g', '--graphpath', type=str, dest='graphpath', 
         required=True, help='path to folder with input graphs for tbwt '
-        '(.mol or .sdf files). Watch out there\'s no other files in that '
-        'folder, hidden files are ignored.')
+        '(.mol or .sdf files, hidden files are ignored) OR path to file '
+        ' containing a listing of graphs in the format of '
+        '\"ls -1 {graphdir}/*.mol > {outputdir}/graphlist.txt\"')
     parser.add_argument('-t', '--tbwtresult', type=str, dest='tbwtresult', 
         required=True, help='path to tbwt result file (e.g. result.freqs)')
     parser.add_argument('-o', '--outputpath', type=str, dest='output', 
@@ -62,12 +63,20 @@ if __name__ == '__main__':
     # convert to absolute paths
     graphpath = os.path.abspath(args.graphpath)
 
-    # remove ending slash on path if existing
-    if graphpath.endswith('/'):
-        graphpath = graphpath[:-1]
+    # check if graphpath is a file listing or a dir with the graphs
+    if os.path.isfile(graphpath):
+        logger.debug("reading graphs from file " + graphpath)
+        with open(graphpath, 'r') as graph_listing:
+            graph_list = graph_listing.read().splitlines()
+    else:
+        logger.debug("reading graphs from directory " + graphpath)
+            # remove ending slash on path if existing
+        if graphpath.endswith('/'):
+            graphpath = graphpath[:-1]
+        # read all graphs and sort them in alphanumerical order
+        graph_list = sorted(os.listdir(graphpath))
 
-    # read all graphs and sort them in alphanumerical order
-    graph_list = sorted(os.listdir(graphpath))
+    logger.debug(graph_list)
 
     # read tbwt results file and convert it to a list of lines
     with open(args.tbwtresult, 'r') as tbwtresultfile:
