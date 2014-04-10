@@ -74,14 +74,29 @@ if __name__ == '__main__':
         tbwt_list = tbwtresultfile.read().splitlines()
 
     # iterate over all graphs listed in the directory
-    for graph in graph_list:
+    for i in range(len(graph_list)):
+
+        # remove file name extension
+        graph_list[i] = os.path.splitext(graph_list[i])[0]
+        graph = graph_list[i]
 
         # ignore hidden files / files with names starting with .
         if graph[0] == ".":
             continue
 
-        logger.debug(len(tbwt_list))
+        # for each reaction check the frequencies of each path
+        for line in tbwt_list:
+            # if graph name is found in this line extract frequency
+            matches = re.search(graph + r':\d', line)
+            if matches:
+                matches_list = matches.group(0)
+                # get frequency by removing graph name + one char for ":"
+                frequency = int(matches_list[len(graph)+1:])
+                logger.debug(graph + ": " + str(frequency))
+            else: 
+                logger.debug(graph + ": no match")
 
-        # for each reaction check 
-        # for line in tbwtresultfile
+
+
+    logger.debug(graph_list)
 
