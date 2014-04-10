@@ -24,6 +24,9 @@ def parseargs():
         help='show verbose information')
     parser.add_argument('-f', '--force', dest='force', action='store_true',
         help='force overwrite if output dir exists already')
+    parser.add_argument('-m', '--mincommon', type=int, dest='mincommon', 
+        help='only take paths into consideration that are shared between more '
+        'than {mincommon} graphs')
 
     args = parser.parse_args()
     return args
@@ -79,6 +82,17 @@ if __name__ == '__main__':
     # read tbwt results file and convert it to a list of lines
     with open(args.tbwtresult, 'r') as tbwtresultfile:
         tbwt_list = tbwtresultfile.read().splitlines()
+
+    # if common parameter is set remove all paths with only one graph listed
+    if (args.mincommon):
+        new_tbwt_list = []
+        for item in tbwt_list:
+            if (not re.match(r"^\S*(?:\s\S*){0," + str(args.mincommon) + "}$", item)):
+                new_tbwt_list.append(item)
+
+        logger.debug(str(len(tbwt_list)-len(new_tbwt_list)) + " paths removed "
+            "that are shared between <= " + str(args.mincommon) + " graphs.")
+        tbwt_list = new_tbwt_list
 
     # open output feature file to write feature map
     with open(args.output + "/pathkernel_features", 'w') as featurefile:
