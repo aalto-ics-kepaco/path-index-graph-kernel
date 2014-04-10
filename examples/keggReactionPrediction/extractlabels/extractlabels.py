@@ -1,4 +1,4 @@
-# Extracts the multilabel matrix Y for the MMCRF prediction task
+# Extracts the multilabel matrix Y for the MMCRF prediction task from KEGG
 #
 # @author Clemens Westrup
 
@@ -6,14 +6,15 @@ import argparse, os, time, re, logging, sys
 
 # parse command line arguments
 def parseargs():
-    parser = argparse.ArgumentParser(description='Extracts the multilabel'
-        'matrix Y for the MMCRF prediction task')
+    parser = argparse.ArgumentParser(description='Extracts the multilabel '
+        'matrix Y for the MMCRF prediction task from KEGG')
     parser.add_argument('-k', '--keggpath', type=str, dest='keggpath', 
         required=True, help='path to kegg ligand database')
     parser.add_argument('-r', '--reactiongraphsdir', type=str, dest='rgrapgsdir', 
-        required=True, help='file with listing of used kegg reactions')
+        required=True, help='path to directory containing used kegg '
+        'graphs as input for tbwt')
     parser.add_argument('-o', '--output', type=str, dest='output', 
-        required=True, help='path to store output result')
+        required=True, help='path to directory to store output result')
     parser.add_argument('-v', '--verbose', dest='verbose', action='store_true',
         help='show verbose information')
     parser.add_argument('-f', '--force', dest='force', action='store_true',
@@ -41,12 +42,14 @@ def check_output(outputfile, force):
 # main function
 if __name__ == '__main__':
 
+    # get logger and set it up
     logging.basicConfig(level=logging.INFO, format="%(levelname)s - %(message)s")
     logger = logging.getLogger()
 
+    # parse input arguments 
     args = parseargs()
 
-    # convert paths
+    # convert to absolute paths
     keggpath = os.path.abspath(args.keggpath)
     rgrapgsdir = os.path.abspath(args.rgrapgsdir)
 
@@ -54,19 +57,23 @@ if __name__ == '__main__':
     if keggpath.endswith('/'):
         keggpath = keggpath[:-1]
 
-    # show more output
+    # show debug level log messages if verbose is set
     if (args.verbose):
         logger.setLevel(logging.DEBUG)
 
     # prepare output
-    check_output(os.path.abspath(args.output), args.force)
+    check_output(os.path.abspath(args.output + "/pathkernel_labels"), args.force)
+    check_output(os.path.abspath(args.output + "/graphlist.txt"), args.force)
 
     # dictionary to store output and set for unique ec-codes
     reactiondir = {}
     eccodes = set()
 
     # read all reactiongraphs 
-    reactionlist_content = " ".join(line.strip() for line in os.listdir(rgrapgsdir))
+    reaction_list = sorted(os.listdir(rgrapgsdir))
+
+    logger.debug("reactionlist: ")
+    logger.debug(reaction_list)
 
     # process kegg reactions file      
     with open(keggpath + '/reaction', 'r') as infile:
@@ -103,17 +110,24 @@ if __name__ == '__main__':
                     pass
 
             # if an entry was read (meaning reaction number and ec codes)
-            if line == "///\n" and reaction_read and ecnumbers_read:
+            # then store the reaction entry with eccodes 
+            if reaction_read and ecnumbers_read:
                 
                 reaction_read = False
                 ecnumbers_read = False
-                # and if the entry exists in the reactionslist file
-                # then store it
-                if re.search(reaction, reactionlist_content):
-                    reactions_found += 1
-                    reactiondir[reaction] = ecnumbers
-                    # add ec numbers to set of unique ec codes
-                    for ec in ecnumbers: eccodes.add(ec)
+
+                # iterate over reactions in graphs directory
+                for listed_reaction in reaction_list:
+                    # remove file extension
+                    listed_reaction_basename = os.path.splitext(listed_reaction)[0]
+                    # if the reaction exists then store it with the filename
+                    # e.g. reaction could be R00258 and a matching listed_reaction
+                    # would be R00258_0_b.mol where R00258_0_b is stored
+                    if (re.match(reaction, listed_reaction_basename)):
+                        reactions_found += 1
+                        reactiondir[listed_reaction_basename] = ecnumbers
+                        # add ec numbers to set of unique ec codes
+                        for ec in ecnumbers: eccodes.add(ec)
 
     # convert unique ec-codes to sorted list
     sorted_ecs = sorted(list(eccodes))
@@ -124,16 +138,25 @@ if __name__ == '__main__':
         + " unique ec-codes from found reactions")
 
     # write output file
-    with open(args.output, 'w') as outfile:
-        for reaction in reactiondir:
-            output_line = ""
-            logger.debug("found reaction " + reaction + " with ec-codes:")
-            
-            for ec in sorted_ecs: 
-                if ec in reactiondir[reaction]:
-                    output_line += "1 "
-                    logger.debug(ec)
-                else:
-                    output_line += "0 "
-            output_line = output_line[:-1] + "\n"
-            outfile.write(output_line)
+    with open(args.output + "/pathkernel_labels", 'w') as outfile:
+        with open(args.output + "/graphlist.txt", 'w') as graphlist_output:
+            for reaction in sorted(reactiondir):
+                logger.debug("found reaction " + reaction + " with ec-codes:")
+                
+                # prepare line of output for a new graph with its labels
+                output_line = ""
+
+                # write line to reaction listing
+                graphlist_output.write(reaction + ".mol\n")
+
+                # write line with binary vector for graph with eccodes as labels 
+                for ec in sorted_ecs: 
+                    if ec in reactiondir[reaction]:
+                        output_line += "1 "
+                        logger.debug(ec)
+                    else:
+                        output_line += "0 "
+                output_line = output_line[:-1] + "\n"
+                outfile.write(output_line)
+
+
