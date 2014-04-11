@@ -63,6 +63,7 @@ def compute_feature_vector(graph, tbwt_list):
     graph -- name of the graph 
     tbwt_list -- list of tbwt path entries read from the result file
     """
+    logger.debug(graph)
     # prepare empty array 
     feature_vector = zeros(len(tbwt_list))
     # for each reaction get the frequencies of each path
@@ -73,7 +74,7 @@ def compute_feature_vector(graph, tbwt_list):
             matches_list = matches.group(0)
             # get frequency by removing graph name + one char for ":"
             frequency = int(matches_list[len(graph)+1:])
-            feature_vector[index] = 1
+            feature_vector[index] = frequency
     return feature_vector
 
 # main function
@@ -132,27 +133,32 @@ if __name__ == '__main__':
         if graph[0] != ".": 
             # remove file extension
             graph_list_copy.append(os.path.splitext(graph_list[idx])[0])
-    graph_list_copy = graph_list
+    graph_list = graph_list_copy
 
     # open output feature file to write feature map
-    with open(outpath + "features", 'w') as featurefile:
+    if args.writefeatures:
+        featurefile = open(outpath + 'features', 'w')
 
-        # iterate over all graphs to compute all kernels from feature vectors with 
-        # the feature vector of the current graph (to avoid storage of full
-        # feature matrix)
-        for graph_i in graph_list:
+    # iterate over all graphs to compute all kernels from feature vectors with 
+    # the feature vector of the current graph (to avoid storage of full
+    # feature matrix)
+    for graph_i in graph_list:
 
-            # feature vector phi for graph i
-            phi_i = compute_feature_vector(graph_i, tbwt_list)
+        # feature vector phi for graph i
+        phi_i = compute_feature_vector(graph_i, tbwt_list)
 
-            # write out feature vector
+        # write out feature vector
+        if args.writefeatures:
             output_line = ""
             for entry in phi_i:
-                output_line += str(entry) + " "
+                output_line += str(int(entry)) + " "
             output_line = output_line[:-1] + "\n"
             featurefile.write(output_line)
 
-            # iterate over all graphs again to generate the kernels with graph i
-            #for graph_i in graph_list:
+        # iterate over all graphs again to generate the kernels with graph i
+        #for graph_i in graph_list:
 
+    # close output feature file to write feature map
+    if args.writefeatures:
+        featurefile.close()
 
