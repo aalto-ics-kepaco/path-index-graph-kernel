@@ -3,8 +3,12 @@
 #
 # @author Clemens Westrup
 
-import argparse, logging, os, re
-from numpy import *
+import argparse, logging, os, re, sys
+from scipy.sparse import *
+from scipy.spatial.distance import *
+from scipy import *
+import numpy as np
+from itertools import izip
 
 # parse command line arguments
 def parseargs():
@@ -55,6 +59,14 @@ def check_output(outputfile, force):
                 ' exists already, aborting.');
             sys.exit(1)
 
+def get_output_line_from_vector(vector, cast_integer):
+    output_line = ""
+    for entry in vector:
+        if cast_integer:
+            entry = int(entry)
+        output_line += str(entry) + " "
+    output_line = output_line[:-1] + "\n"
+    return output_line
 
 def compute_feature_vector(graph, tbwt_list):
     """Compute a feature vector for a graph from its path frequencies.
@@ -63,9 +75,8 @@ def compute_feature_vector(graph, tbwt_list):
     graph -- name of the graph 
     tbwt_list -- list of tbwt path entries read from the result file
     """
-    logger.debug(graph)
     # prepare empty array 
-    feature_vector = zeros(len(tbwt_list))
+    feature_vector = zeros((len(tbwt_list),1), dtype=float)
     # for each reaction get the frequencies of each path
     for index,item in enumerate(tbwt_list):
         # if graph name is found in this line extract frequency
@@ -76,6 +87,10 @@ def compute_feature_vector(graph, tbwt_list):
             frequency = int(matches_list[len(graph)+1:])
             feature_vector[index] = frequency
     return feature_vector
+
+def compute_kernel(phi_1, phi_2, kernel_type):
+    if kernel_type == "linear":
+        return phi_1.T.dot(phi_2)
 
 # main function
 if __name__ == '__main__':
@@ -135,30 +150,59 @@ if __name__ == '__main__':
             graph_list_copy.append(os.path.splitext(graph_list[idx])[0])
     graph_list = graph_list_copy
 
-    # open output feature file to write feature map
+    # open feature output file to write feature map if requested
     if args.writefeatures:
         featurefile = open(outpath + 'features', 'w')
+
+    # open kernel output file
+    kernelfile = open(outpath + 'kernels', 'w')
+
+    # generate diagonal kernels for normalization
+    diagonal_kernels = np.zeros(len(graph_list))
+    for i, graph_i in enumerate(graph_list): 
+        phi_i = compute_feature_vector(graph_i, tbwt_list)
+        diagonal_kernels[i] = compute_kernel(phi_i, phi_i, "linear")
+
+    print "diagonal kernels"
+    print diagonal_kernels  
 
     # iterate over all graphs to compute all kernels from feature vectors with 
     # the feature vector of the current graph (to avoid storage of full
     # feature matrix)
-    for graph_i in graph_list:
+    for i, graph_i in enumerate(graph_list):
+
+        # prepare array as line of kernel matrix
+        kernel_matrix_row_i = np.zeros(len(graph_list))
 
         # feature vector phi for graph i
         phi_i = compute_feature_vector(graph_i, tbwt_list)
 
         # write out feature vector
         if args.writefeatures:
-            output_line = ""
-            for entry in phi_i:
-                output_line += str(int(entry)) + " "
-            output_line = output_line[:-1] + "\n"
+            output_line = get_output_line_from_vector(phi_i, True)
             featurefile.write(output_line)
 
         # iterate over all graphs again to generate the kernels with graph i
-        #for graph_i in graph_list:
+        for j, graph_j in enumerate(graph_list):
 
-    # close output feature file to write feature map
+            # feature vector phi for graph i
+            phi_j = compute_feature_vector(graph_j, tbwt_list)
+
+            # kernel for graphs i and j
+            kernel_matrix_row_i[j] = compute_kernel(phi_i, phi_j, "linear")
+
+        # normalize kernel row
+        kernel_matrix_row_i_normalized = zeros(len(graph_list))
+        for j, kernel in enumerate(kernel_matrix_row_i):
+            kernel_matrix_row_i_normalized[j] = (kernel_matrix_row_i[j] 
+                / diagonal_kernels[i])
+
+        # write out normalized kernel row
+        output_line = get_output_line_from_vector(kernel_matrix_row_i_normalized, False)
+        kernelfile.write(output_line)
+
+    # close output files 
+    kernelfile.close()
     if args.writefeatures:
         featurefile.close()
 
