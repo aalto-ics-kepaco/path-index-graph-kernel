@@ -78,7 +78,7 @@ if __name__ == '__main__':
     logger.debug(reaction_list)
 
     # ec-code search pattern
-    if (ignoreincomplete):
+    if (args.ignoreincomplete):
         ecpattern = r"((?:(?:\d+)\.){3}(?:\d+))"
     else:
         ecpattern = r"((?:(?:\d+|-)\.){3}(?:\d+|-))"
