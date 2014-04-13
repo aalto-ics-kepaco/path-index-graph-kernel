@@ -163,9 +163,6 @@ if __name__ == '__main__':
         phi_i = compute_feature_vector(graph_i, tbwt_list)
         diagonal_kernels[i] = compute_kernel(phi_i, phi_i, "linear")
 
-    print "diagonal kernels"
-    print diagonal_kernels  
-
     # iterate over all graphs to compute all kernels from feature vectors with 
     # the feature vector of the current graph (to avoid storage of full
     # feature matrix)
@@ -195,7 +192,7 @@ if __name__ == '__main__':
         kernel_matrix_row_i_normalized = zeros(len(graph_list))
         for j, kernel in enumerate(kernel_matrix_row_i):
             kernel_matrix_row_i_normalized[j] = (kernel_matrix_row_i[j] 
-                / diagonal_kernels[i])
+                / sqrt(diagonal_kernels[i] * diagonal_kernels[i]))
 
         # write out normalized kernel row
         output_line = get_output_line_from_vector(kernel_matrix_row_i_normalized, False)
