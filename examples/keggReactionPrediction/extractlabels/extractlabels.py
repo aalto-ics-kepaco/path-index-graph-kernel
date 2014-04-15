@@ -15,6 +15,8 @@ def parseargs():
         'graphs as input for tbwt')
     parser.add_argument('-o', '--output', type=str, dest='output', 
         required=True, help='path to directory to store output result')
+    parser.add_argument('-i', '--ignoreincomplete', dest='ignoreincomplete', 
+        action='store_true', help='Ignore incomplete ec-labels like 1.3.2.-')
     parser.add_argument('-v', '--verbose', dest='verbose', action='store_true',
         help='show verbose information')
     parser.add_argument('-f', '--force', dest='force', action='store_true',
@@ -75,6 +77,13 @@ if __name__ == '__main__':
     logger.debug("reactionlist: ")
     logger.debug(reaction_list)
 
+    # ec-code search pattern
+    if (args.ignoreincomplete):
+        ecpattern = r"((?:(?:\d+)\.){3}(?:\d+))"
+    else:
+        ecpattern = r"((?:(?:\d+|-)\.){3}(?:\d+|-))"
+
+
     # process kegg reactions file      
     with open(keggpath + '/reaction', 'r') as infile:
         reactions_found = 0
@@ -104,7 +113,7 @@ if __name__ == '__main__':
             # extract ec numbers if currently reading those
             if reading_ecnumbers:
                 try:
-                    new_ecnumbers = re.findall(r"((?:(?:\d+|-)\.){3}(?:\d+|-))", line)
+                    new_ecnumbers = re.findall(ecpattern, line)
                     ecnumbers.extend(new_ecnumbers)
                 except AttributeError:
                     pass

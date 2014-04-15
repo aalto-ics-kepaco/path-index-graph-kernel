@@ -3,13 +3,18 @@
 #
 # @author Clemens Westrup
 
-import argparse, logging, os, re
-import * from numpy
+import argparse, logging, os, re, sys
+from scipy.sparse import *
+from scipy.spatial.distance import *
+from scipy import *
+import numpy as np
+from itertools import izip
 
 # parse command line arguments
 def parseargs():
     parser = argparse.ArgumentParser(description='Extracts feature map Phi and '
-        'the kernel matrix K from tbwt results. Note: Matrices are sorted '
+        'if specified by parameter writefeatures and computes the kernel '
+        'matrix K from tbwt results. Note: Matrices are sorted '
         'in alphanumerical order of graph filenames so labels should be too.')
     parser.add_argument('-g', '--graphpath', type=str, dest='graphpath', 
         required=True, help='path to folder with input graphs for tbwt '
@@ -18,16 +23,20 @@ def parseargs():
         '\"ls -1 {graphdir}/*.mol > {outputdir}/graphlist.txt\"')
     parser.add_argument('-t', '--tbwtresult', type=str, dest='tbwtresult', 
         required=True, help='path to tbwt result file (e.g. result.freqs)')
-    parser.add_argument('-o', '--outputpath', type=str, dest='output', 
+    parser.add_argument('-o', '--outpath', type=str, dest='outpath', 
         required=True, help='path to store output files '
-        '(\"features\" and \"kernels\"')
+        '(\"kernels\" and if selected \"features\"')
+    parser.add_argument('-p', '--prefix', type=str, dest='prefix', 
+        help='add a prefix to the output files')    
+    parser.add_argument('-c', '--common', type=int, dest='common', 
+        help='only take paths into consideration that are shared between more '
+        'than {common} graphs')
+    parser.add_argument('-wf', '--writefeatures', dest='writefeatures', 
+        action='store_true', help='write out features in a file')
     parser.add_argument('-v', '--verbose', dest='verbose', action='store_true',
         help='show verbose information')
     parser.add_argument('-f', '--force', dest='force', action='store_true',
         help='force overwrite if output dir exists already')
-    parser.add_argument('-c', '--common', type=int, dest='common', 
-        help='only take paths into consideration that are shared between more '
-        'than {common} graphs')
 
     args = parser.parse_args()
     return args
@@ -50,22 +59,60 @@ def check_output(outputfile, force):
                 ' exists already, aborting.');
             sys.exit(1)
 
+def get_output_line_from_vector(vector, cast_integer):
+    output_line = ""
+    for entry in vector:
+        if cast_integer:
+            entry = int(entry)
+        output_line += str(entry) + " "
+    output_line = output_line[:-1] + "\n"
+    return output_line
+
+def compute_feature_vector(graph, tbwt_list):
+    """Compute a feature vector for a graph from its path frequencies.
+
+    Keyword arguments:
+    graph -- name of the graph 
+    tbwt_list -- list of tbwt path entries read from the result file
+    """
+    # prepare empty array 
+    feature_vector = zeros((len(tbwt_list),1), dtype=float)
+    # for each reaction get the frequencies of each path
+    for index,item in enumerate(tbwt_list):
+        # if graph name is found in this line extract frequency
+        matches = re.search(graph + r':\d', item)
+        if matches:
+            matches_list = matches.group(0)
+            # get frequency by removing graph name + one char for ":"
+            frequency = int(matches_list[len(graph)+1:])
+            feature_vector[index] = frequency
+    return feature_vector
+
+def compute_kernel(phi_1, phi_2, kernel_type):
+    if kernel_type == "linear":
+        return phi_1.T.dot(phi_2)
+
 # main function
 if __name__ == '__main__':
+
+    # parse input arguments 
+    args = parseargs()
+    outpath = args.outpath
+    graphpath = args.graphpath
 
     # get logger and set it up
     logging.basicConfig(level=logging.INFO, format="%(levelname)s - %(message)s")
     logger = logging.getLogger()
-
-    # parse input arguments 
-    args = parseargs()
-
     # show debug level log messages if verbose is set
     if (args.verbose):
         logger.setLevel(logging.DEBUG)
 
-    # convert to absolute paths
-    graphpath = os.path.abspath(args.graphpath)
+    # add folder extension for output files
+    if not outpath.endswith('/'):
+        outpath = outpath + '/'
+    # add prefix if set
+    if args.prefix:
+        outpath  = outpath + args.prefix
 
     # check if graphpath is a file listing or a dir with the graphs
     if os.path.isfile(graphpath):
@@ -74,9 +121,6 @@ if __name__ == '__main__':
             graph_list = graph_listing.read().splitlines()
     else:
         logger.debug("reading graphs from directory " + graphpath)
-            # remove ending slash on path if existing
-        if graphpath.endswith('/'):
-            graphpath = graphpath[:-1]
         # read all graphs and sort them in alphanumerical order
         graph_list = sorted(os.listdir(graphpath))
 
@@ -96,36 +140,74 @@ if __name__ == '__main__':
             "that are shared between <= " + str(args.common) + " graphs.")
         tbwt_list = new_tbwt_list
 
-    # open output feature file to write feature map
-    with open(args.output + "/pathkernel_features", 'w') as featurefile:
+    # remove all file extensions from graph names 
+    # and delete hidden file entries
+    graph_list_copy = [];
+    for idx, graph in enumerate(graph_list):
+        # not hidden file
+        if graph[0] != ".": 
+            # remove file extension
+            graph_list_copy.append(os.path.splitext(graph_list[idx])[0])
+    graph_list = graph_list_copy
 
-        # iterate over all graphs listed in the directory
-        for i in range(len(graph_list)):
+    # open feature output file to write feature map if requested
+    if args.writefeatures:
+        featurefile = open(outpath + 'features', 'w')
 
-            # new line in features output file for the new graph
-            output_line = ""
+    # open kernel output file
+    kernelfile = open(outpath + 'kernels', 'w')
 
-            # remove file name extension
-            graph_list[i] = os.path.splitext(graph_list[i])[0]
-            graph = graph_list[i]
+    # generate diagonal kernels for normalization
+    diagonal_kernels = np.zeros(len(graph_list))
+    for i, graph_i in enumerate(graph_list): 
+        phi_i = compute_feature_vector(graph_i, tbwt_list)
+        diagonal_kernels[i] = compute_kernel(phi_i, phi_i, "linear")
+        logger.debug("computing diagonal kernel #" + str(i))
 
-            # ignore hidden files / files with names starting with .
-            if graph[0] == ".":
-                continue
+    # iterate over all graphs to compute all kernels from feature vectors with 
+    # the feature vector of the current graph (to avoid storage of full
+    # feature matrix)
+    for i, graph_i in enumerate(graph_list):
 
-            # for each reaction get the frequencies of each path
-            for line in tbwt_list:
-                # if graph name is found in this line  extract frequency
-                matches = re.search(graph + r':\d', line)
-                if matches:
-                    matches_list = matches.group(0)
-                    # get frequency by removing graph name + one char for ":"
-                    frequency = int(matches_list[len(graph)+1:])
-                    output_line += str(frequency) + " "
-                else: 
-                    output_line += "0 "
+        # output graph 
+        logger.debug("computing kernel row of graph i = " + str(i))
 
-            # write line with path frequencies / features for graph i
-            output_line = output_line[:-1] + "\n"
+        # prepare array as line of kernel matrix
+        kernel_matrix_row_i = np.zeros(len(graph_list))
+
+        # feature vector phi for graph i
+        phi_i = compute_feature_vector(graph_i, tbwt_list)
+
+        # write out feature vector
+        if args.writefeatures:
+            output_line = get_output_line_from_vector(phi_i, True)
             featurefile.write(output_line)
+
+        # iterate over all graphs again to generate the kernels with graph i
+        for j, graph_j in enumerate(graph_list):
+
+            # output graph 
+            logger.debug("computing kernel value for graphs " 
+                + str(i) + " and " + str(j))
+
+            # feature vector phi for graph i
+            phi_j = compute_feature_vector(graph_j, tbwt_list)
+
+            # kernel for graphs i and j
+            kernel_matrix_row_i[j] = compute_kernel(phi_i, phi_j, "linear")
+
+        # normalize kernel row
+        kernel_matrix_row_i_normalized = zeros(len(graph_list))
+        for j, kernel in enumerate(kernel_matrix_row_i):
+            kernel_matrix_row_i_normalized[j] = (kernel_matrix_row_i[j] 
+                / sqrt(diagonal_kernels[i] * diagonal_kernels[i]))
+
+        # write out normalized kernel row
+        output_line = get_output_line_from_vector(kernel_matrix_row_i_normalized, False)
+        kernelfile.write(output_line)
+
+    # close output files 
+    kernelfile.close()
+    if args.writefeatures:
+        featurefile.close()
 
