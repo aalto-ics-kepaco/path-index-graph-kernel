@@ -168,6 +168,9 @@ if __name__ == '__main__':
     # feature matrix)
     for i, graph_i in enumerate(graph_list):
 
+        # output graph 
+        logger.debug("kernel row of graph i = " + str(i))
+
         # prepare array as line of kernel matrix
         kernel_matrix_row_i = np.zeros(len(graph_list))
 
@@ -181,6 +184,9 @@ if __name__ == '__main__':
 
         # iterate over all graphs again to generate the kernels with graph i
         for j, graph_j in enumerate(graph_list):
+
+            # output graph 
+            logger.debug("kernel row of graph j = " + str(j))
 
             # feature vector phi for graph i
             phi_j = compute_feature_vector(graph_j, tbwt_list)
