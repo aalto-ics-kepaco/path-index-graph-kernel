@@ -162,6 +162,7 @@ if __name__ == '__main__':
     for i, graph_i in enumerate(graph_list): 
         phi_i = compute_feature_vector(graph_i, tbwt_list)
         diagonal_kernels[i] = compute_kernel(phi_i, phi_i, "linear")
+        logger.debug("computing diagonal kernel #" + str(i))
 
     # iterate over all graphs to compute all kernels from feature vectors with 
     # the feature vector of the current graph (to avoid storage of full
@@ -169,7 +170,7 @@ if __name__ == '__main__':
     for i, graph_i in enumerate(graph_list):
 
         # output graph 
-        logger.debug("kernel row of graph i = " + str(i))
+        logger.debug("computing kernel row of graph i = " + str(i))
 
         # prepare array as line of kernel matrix
         kernel_matrix_row_i = np.zeros(len(graph_list))
@@ -186,7 +187,8 @@ if __name__ == '__main__':
         for j, graph_j in enumerate(graph_list):
 
             # output graph 
-            logger.debug("kernel row of graph j = " + str(j))
+            logger.debug("computing kernel value for graphs " 
+                + str(i) " and " + str(j))
 
             # feature vector phi for graph i
             phi_j = compute_feature_vector(graph_j, tbwt_list)
