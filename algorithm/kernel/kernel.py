@@ -188,7 +188,7 @@ if __name__ == '__main__':
 
             # output graph 
             logger.debug("computing kernel value for graphs " 
-                + str(i) " and " + str(j))
+                + str(i) + " and " + str(j))
 
             # feature vector phi for graph i
             phi_j = compute_feature_vector(graph_j, tbwt_list)
