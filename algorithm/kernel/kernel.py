@@ -4,6 +4,7 @@
 # @author Clemens Westrup
 
 import argparse, logging, os, re
+import * from numpy
 
 # parse command line arguments
 def parseargs():
