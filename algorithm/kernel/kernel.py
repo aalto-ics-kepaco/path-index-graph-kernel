@@ -13,6 +13,7 @@ from scipy.spatial.distance import *
 from scipy import *
 import numpy as np
 import time
+import math
 
 
 def parseargs():
@@ -209,7 +210,8 @@ if __name__ == '__main__':
         diagonal_kernels[i] = compute_kernel(phi_i, phi_i)
         end = time.time()
         logger.debug("computed diagonal kernel #" + str(i)
-                     + " in " + str(end - start) + " ms")
+                     + " in about " + str(math.ceil(end - start)/1000)
+                     + " seconds.")
 
     # iterate over all graphs to compute all kernels from feature vectors with
     # the feature vector of the current graph (to avoid storage of full
@@ -243,7 +245,7 @@ if __name__ == '__main__':
             end_j = time.time()
             logger.debug("computed value for graphs "
                          + str(i) + " and " + str(j)
-                         + " in about " + str(int(end_j - start_j)/1000)
+                         + " in about " + str(math.ceil(end_j - start_j)/1000)
                          + " seconds.")
         # normalize kernel row
         kernel_matrix_row_i_normalized = zeros(len(graph_list))
@@ -253,10 +255,11 @@ if __name__ == '__main__':
                                                         * diagonal_kernels[i]))
         end_i = time.time()
         logger.debug("computed all kernels for graph " + str(i)
-                     + " in about " + str(int(end_j - start_j)/1000)
-                     + " seconds. Based on this value approximately "
-                     + str(int(end_j - start_j)/60000
-                           * (len(graph_list)) - i)
+                     + " in about " + str(math.ceil(end_j - start_j) / 1000)
+                     + " seconds.")
+        logger.debug("Based on this value approximately "
+                     + str(math.ceil(((end_j - start_j) / 60000)
+                           * (len(graph_list) - i)))
                      + " minutes left in total.")
 
         # write out normalized kernel row
