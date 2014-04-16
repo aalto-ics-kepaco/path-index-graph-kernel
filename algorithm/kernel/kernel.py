@@ -12,6 +12,7 @@ from scipy.sparse import *
 from scipy.spatial.distance import *
 from scipy import *
 import numpy as np
+import time
 
 
 def parseargs():
@@ -176,7 +177,6 @@ if __name__ == '__main__':
         for item in tbwt_list:
             if (not re.match(matching_pattern, item)):
                 new_tbwt_list.append(item)
-
         logger.debug(str(len(tbwt_list)-len(new_tbwt_list))
                      + " of " + str(len(tbwt_list)) + " paths removed "
                      + "that are shared between <= " + str(args.common)
@@ -204,17 +204,19 @@ if __name__ == '__main__':
     diagonal_kernels = np.zeros(len(graph_list))
 
     for i, graph_i in enumerate(graph_list):
+        start = time.time()
         phi_i = compute_feature_vector(graph_i, tbwt_list)
         diagonal_kernels[i] = compute_kernel(phi_i, phi_i)
-        logger.debug("computing diagonal kernel #" + str(i))
+        end = time.time()
+        logger.debug("computed diagonal kernel #" + str(i)
+                     + " in " + str(end - start) + " ms")
 
     # iterate over all graphs to compute all kernels from feature vectors with
     # the feature vector of the current graph (to avoid storage of full
     # feature matrix)
     for i, graph_i in enumerate(graph_list):
 
-        # output graph
-        logger.debug("computing kernel row of graph i = " + str(i))
+        start_i = time.time()
 
         # prepare array as line of kernel matrix
         kernel_matrix_row_i = np.zeros(len(graph_list))
@@ -230,9 +232,7 @@ if __name__ == '__main__':
         # iterate over all graphs again to generate the kernels with graph i
         for j, graph_j in enumerate(graph_list):
 
-            # output graph
-            logger.debug("computing kernel value for graphs "
-                         + str(i) + " and " + str(j))
+            start_j = time.time()
 
             # feature vector phi for graph i
             phi_j = compute_feature_vector(graph_j, tbwt_list)
@@ -240,12 +240,24 @@ if __name__ == '__main__':
             # kernel for graphs i and j
             kernel_matrix_row_i[j] = compute_kernel(phi_i, phi_j)
 
+            end_j = time.time()
+            logger.debug("computed value for graphs "
+                         + str(i) + " and " + str(j)
+                         + " in about " + str(int(end_j - start_j)/1000)
+                         + " seconds.")
         # normalize kernel row
         kernel_matrix_row_i_normalized = zeros(len(graph_list))
         for j, kernel in enumerate(kernel_matrix_row_i):
             kernel_matrix_row_i_normalized[j] = (kernel_matrix_row_i[j]
                                                  / sqrt(diagonal_kernels[i]
                                                         * diagonal_kernels[i]))
+        end_i = time.time()
+        logger.debug("computed all kernels for graph " + str(i)
+                     + " in about " + str(int(end_j - start_j)/1000)
+                     + " seconds. Based on this value approximately "
+                     + str(int(end_j - start_j)/60000
+                           * (len(graph_list)) - i)
+                     + " minutes left in total.")
 
         # write out normalized kernel row
         output_line = get_output_line_from_vector(
