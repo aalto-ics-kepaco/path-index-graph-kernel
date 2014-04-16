@@ -97,7 +97,7 @@ def get_output_line_from_vector(vector, cast_integer):
     return output_line
 
 
-def compute_feature_vector(graph, tbwt_list):
+def compute_feature_vector(graph, tbwt_list, row=True):
     """Compute a feature vector for a graph from its path frequencies.
 
     Keyword arguments:
@@ -105,7 +105,10 @@ def compute_feature_vector(graph, tbwt_list):
     tbwt_list -- list of tbwt path entries read from the result file
     """
     # prepare empty array
-    feature_vector = csr_matrix((len(tbwt_list), 1), dtype=float)
+    if row:
+        feature_vector = csr_matrix((1, len(tbwt_list)), dtype=float)
+    else:
+        feature_vector = csr_matrix((len(tbwt_list), 1), dtype=float)
     # for each reaction get the frequencies of each path
     for index, item in enumerate(tbwt_list):
         # if graph name is found in this line extract frequency
@@ -114,7 +117,10 @@ def compute_feature_vector(graph, tbwt_list):
             matches_list = matches.group(0)
             # get frequency by removing graph name + one char for ":"
             frequency = int(matches_list[len(graph)+1:])
-            feature_vector[index, 0] = frequency
+            if row:
+                feature_vector[0, index] = frequency
+            else:
+                feature_vector[index, 0] = frequency
     return feature_vector
 
 
@@ -201,7 +207,7 @@ if __name__ == '__main__':
     diagonal_kernels = np.zeros(len(graph_list))
     for i, graph_i in enumerate(graph_list):
         phi_i = compute_feature_vector(graph_i, tbwt_list)
-        diagonal_kernels[i] = compute_kernel(phi_i, phi_i)
+        diagonal_kernels[i] = compute_kernel(phi_i, phi_i.T)
         logger.debug("computing diagonal kernel #" + str(i))
 
     # iterate over all graphs to compute all kernels from feature vectors with
@@ -231,7 +237,7 @@ if __name__ == '__main__':
                          + str(i) + " and " + str(j))
 
             # feature vector phi for graph i
-            phi_j = compute_feature_vector(graph_j, tbwt_list)
+            phi_j = compute_feature_vector(graph_j, tbwt_list, False)
 
             # kernel for graphs i and j
             kernel_matrix_row_i[j] = compute_kernel(phi_i, phi_j)
