@@ -105,7 +105,7 @@ def compute_feature_vector(graph, tbwt_list):
     tbwt_list -- list of tbwt path entries read from the result file
     """
     # prepare empty array
-    feature_vector = csr_matrix((len(tbwt_list), 1), dtype=float)
+    feature_vector = {}
     # for each reaction get the frequencies of each path
     for index, item in enumerate(tbwt_list):
         # if graph name is found in this line extract frequency
@@ -114,7 +114,7 @@ def compute_feature_vector(graph, tbwt_list):
             matches_list = matches.group(0)
             # get frequency by removing graph name + one char for ":"
             frequency = int(matches_list[len(graph)+1:])
-            feature_vector[index, 0] = frequency
+            feature_vector[index] = frequency
     return feature_vector
 
 
@@ -126,8 +126,11 @@ def compute_kernel(phi_1, phi_2, kernel_type="linear"):
     phi_2 -- feature vector 2
     kernel_type -- string to identify the type (currently just "linear")
     """
+    kernelvalue = 0
     if kernel_type == "linear":
-        return phi_1.dot(phi_2).todense().item()
+        for key in set(phi_1.keys()) & set(phi_2.keys()):
+            kernelvalue += (phi_1[key] * phi_2[key])
+    return kernelvalue
 
 # main function
 if __name__ == '__main__':
@@ -199,6 +202,7 @@ if __name__ == '__main__':
 
     # generate diagonal kernels for normalization
     diagonal_kernels = np.zeros(len(graph_list))
+
     for i, graph_i in enumerate(graph_list):
         phi_i = compute_feature_vector(graph_i, tbwt_list)
         diagonal_kernels[i] = compute_kernel(phi_i, phi_i)
