@@ -1,4 +1,4 @@
-# Extracts feature map Phi and the kernel matrix K from tbwt results 
+# Extracts feature map Phi and the kernel matrix K from tbwt results
 # that can be used as input for MMCRF
 #
 # @author Clemens Westrup
@@ -75,8 +75,8 @@ def compute_feature_vector(graph, tbwt_list):
     graph -- name of the graph 
     tbwt_list -- list of tbwt path entries read from the result file
     """
-    # prepare empty array 
-    feature_vector = zeros((len(tbwt_list),1), dtype=float)
+    # prepare empty array
+    feature_vector = csr_matrix((len(tbwt_list),1), dtype=float)
     # for each reaction get the frequencies of each path
     for index,item in enumerate(tbwt_list):
         # if graph name is found in this line extract frequency
@@ -210,4 +210,3 @@ if __name__ == '__main__':
     kernelfile.close()
     if args.writefeatures:
         featurefile.close()
-
