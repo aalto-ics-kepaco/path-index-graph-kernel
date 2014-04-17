@@ -151,10 +151,13 @@ if __name__ == '__main__':
     for graph in graph_list:
         graph_list_no_ext.append(os.path.splitext(graph)[0])
     graph_list = graph_list_no_ext
+    num_graphs = len(graph_list)
 
     # read tbwt results file and convert it to a list of lines
     with open(args.tbwtresult, 'r') as tbwtresultfile:
         tbwt_list = tbwtresultfile.read().splitlines()
+
+    num_tbwt_entries = len(tbwt_list)
 
     logger.info("Extracting features from tbwt result.")
     # dictionary with graph entries that that contain dictionaries themselves
@@ -164,29 +167,29 @@ if __name__ == '__main__':
     matching_pattern = r"^\S*(?:\s\S*){0," + str(args.common) + "}$"
     removed_paths = 0
     # extract features
-    for path, item in enumerate(tbwt_list):
+    for path_i, line in enumerate(tbwt_list):
         # if common parameter and current path matches pattern
         # meaning it has <= args.common graphs listed it's discarded
-        if (args.common and re.match(matching_pattern, item)):
+        if (args.common and re.match(matching_pattern, line)):
             removed_paths += 1
         else:
             # extract graphs
-            entries = item.split(' ')[1:]
+            entries = line.split(' ')[1:]
             # add path to each of those graph entries in feature dictionary
             for entry in entries:
                 [graph, frequency] = entry.split(':')
                 if graph in graph_list:
-                    features.setdefault(graph, {})[path] = int(frequency)
+                    features.setdefault(graph, {})[path_i] = int(frequency)
+            logger.debug("extracted path " + str(path_i)
+                         + " out of " + str(num_tbwt_entries))
 
-    graph_list = features.keys()
-    num_graphs = len(graph_list)
     num_features = len(tbwt_list) - removed_paths
 
-    logger.debug(str(removed_paths)
-                 + " of " + str(len(tbwt_list)) + " paths removed "
-                 + "that are shared between <= " + str(args.common)
-                 + " graphs, resulting in feature vector dimensionality of "
-                 + str(num_features) + ".")
+    logger.info(str(removed_paths)
+                + " of " + str(len(tbwt_list)) + " paths removed "
+                + "that are shared between <= " + str(args.common)
+                + " graphs, resulting in feature vector dimensionality of "
+                + str(num_features) + ".")
 
     # # open feature output file to write feature map if requested
     # if args.writefeatures:
