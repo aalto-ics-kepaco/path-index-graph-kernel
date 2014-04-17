@@ -138,20 +138,27 @@ if __name__ == '__main__':
 
     # check if graphpath is a file listing or a dir with the graphs
     if os.path.isfile(graphpath):
-        logger.debug("reading graphs from file " + graphpath)
+        logger.info("Reading graphs from file " + graphpath)
         with open(graphpath, 'r') as graph_listing:
             graph_list = graph_listing.read().splitlines()
     else:
-        logger.debug("reading graphs from directory " + graphpath)
+        logger.info("Reading graphs from directory " + graphpath)
         # read all graphs and sort them in alphanumerical order
         graph_list = sorted(os.listdir(graphpath))
+
+    # remove file extension for all graphs
+    graph_list_no_ext = []
+    for graph in graph_list:
+        graph_list_no_ext.append(os.path.splitext(graph)[0])
+    graph_list = graph_list_no_ext
 
     # read tbwt results file and convert it to a list of lines
     with open(args.tbwtresult, 'r') as tbwtresultfile:
         tbwt_list = tbwtresultfile.read().splitlines()
 
+    logger.info("Extracting features from tbwt result.")
     # dictionary with graph entries that that contain dictionaries themselves
-   # representing path:feature entries
+    # representing path:feature entries
     features = {}
     # pattern for filtering out paths with <= args.common listed graphs
     matching_pattern = r"^\S*(?:\s\S*){0," + str(args.common) + "}$"
@@ -168,7 +175,8 @@ if __name__ == '__main__':
             # add path to each of those graph entries in feature dictionary
             for entry in entries:
                 [graph, frequency] = entry.split(':')
-                features.setdefault(graph, {})[path] = int(frequency)
+                if graph in graph_list:
+                    features.setdefault(graph, {})[path] = int(frequency)
 
     graph_list = features.keys()
     num_graphs = len(graph_list)
