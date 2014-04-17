@@ -99,27 +99,6 @@ def get_output_line_from_vector(vector, cast_integer):
     return output_line
 
 
-def compute_feature_vector(graph, tbwt_list):
-    """Compute a feature vector for a graph from its path frequencies.
-
-    Keyword arguments:
-    graph -- name of the graph
-    tbwt_list -- list of tbwt path entries read from the result file
-    """
-    # prepare empty array
-    feature_vector = {}
-    # for each reaction get the frequencies of each path
-    for index, item in enumerate(tbwt_list):
-        # if graph name is found in this line extract frequency
-        matches = re.search(graph + r':\d', item)
-        if matches:
-            matches_list = matches.group(0)
-            # get frequency by removing graph name + one char for ":"
-            frequency = int(matches_list[len(graph)+1:])
-            feature_vector[index] = frequency
-    return feature_vector
-
-
 def compute_kernel(phi_1, phi_2, kernel_type="linear"):
     """Compute kernel between two feature vectors
 
@@ -171,47 +150,59 @@ if __name__ == '__main__':
     with open(args.tbwtresult, 'r') as tbwtresultfile:
         tbwt_list = tbwtresultfile.read().splitlines()
 
-    # if common parameter is set remove all paths with only one graph listed
+    # dictionary with graph entries that that contain dictionaries themselves
+   # representing path:feature entries
+    features = {}
+    # pattern for filtering out paths with <= args.common listed graphs
     matching_pattern = r"^\S*(?:\s\S*){0," + str(args.common) + "}$"
-    if (args.common):
-        new_tbwt_list = []
-        for item in tbwt_list:
-            if (not re.match(matching_pattern, item)):
-                new_tbwt_list.append(item)
-        logger.debug(str(len(tbwt_list)-len(new_tbwt_list))
-                     + " of " + str(len(tbwt_list)) + " paths removed "
-                     + "that are shared between <= " + str(args.common)
-                     + " graphs.")
-        tbwt_list = new_tbwt_list
+    removed_paths = 0
+    # extract features
+    for path, item in enumerate(tbwt_list):
+        # if common parameter and current path matches pattern
+        # meaning it has <= args.common graphs listed it's discarded
+        if (args.common and re.match(matching_pattern, item)):
+            removed_paths += 1
+        else:
+            # extract graphs
+            entries = item.split(' ')[1:]
+            # add path to each of those graph entries in feature dictionary
+            for entry in entries:
+                [graph, frequency] = entry.split(':')
+                features.setdefault(graph, {})[path] = int(frequency)
 
-    # remove all file extensions from graph names
-    # and delete hidden file entries
-    graph_list_copy = []
-    for idx, graph in enumerate(graph_list):
-        # not hidden file
-        if graph[0] != ".":
-            # remove file extension
-            graph_list_copy.append(os.path.splitext(graph_list[idx])[0])
-    graph_list = graph_list_copy
+    graph_list = features.keys()
+    num_graphs = len(graph_list)
+    num_features = len(tbwt_list) - removed_paths
 
-    # open feature output file to write feature map if requested
-    if args.writefeatures:
-        featurefile = open(outpath + 'features', 'w')
+    logger.debug(str(removed_paths)
+                 + " of " + str(len(tbwt_list)) + " paths removed "
+                 + "that are shared between <= " + str(args.common)
+                 + " graphs, resulting in feature vector dimensionality of "
+                 + str(num_features) + ".")
+
+    # # open feature output file to write feature map if requested
+    # if args.writefeatures:
+    #     featurefile = open(outpath + 'features', 'w')
 
     # open kernel output file
     kernelfile = open(outpath + 'kernels', 'w')
 
     # generate diagonal kernels for normalization
-    diagonal_kernels = np.zeros(len(graph_list))
+    diagonal_kernels = np.zeros(num_graphs)
 
-    for i, graph_i in enumerate(graph_list):
+    start_diagonals = time.time()
+    for i, graph in enumerate(graph_list):
         start = time.time()
-        phi_i = compute_feature_vector(graph_i, tbwt_list)
+        phi_i = features[graph]
         diagonal_kernels[i] = compute_kernel(phi_i, phi_i)
         end = time.time()
-        logger.debug("computed diagonal kernel #" + str(i)
+        logger.debug("Computed diagonal kernel #" + str(i)
                      + " in about " + str(math.ceil(end - start)/1000)
                      + " seconds.")
+    end_diagonals = time.time()
+    logger.info("Computed diagonal kernels in about "
+                + str(math.ceil(end_diagonals - start_diagonals)/60000)
+                + " minutes.")
 
     # iterate over all graphs to compute all kernels from feature vectors with
     # the feature vector of the current graph (to avoid storage of full
@@ -221,10 +212,10 @@ if __name__ == '__main__':
         start_i = time.time()
 
         # prepare array as line of kernel matrix
-        kernel_matrix_row_i = np.zeros(len(graph_list))
+        kernel_matrix_row_i = np.zeros(num_graphs)
 
         # feature vector phi for graph i
-        phi_i = compute_feature_vector(graph_i, tbwt_list)
+        phi_i = features[graph_i]
 
         # write out feature vector
         if args.writefeatures:
@@ -237,7 +228,7 @@ if __name__ == '__main__':
             start_j = time.time()
 
             # feature vector phi for graph i
-            phi_j = compute_feature_vector(graph_j, tbwt_list)
+            phi_j = features[graph_j]
 
             # kernel for graphs i and j
             kernel_matrix_row_i[j] = compute_kernel(phi_i, phi_j)
@@ -248,19 +239,19 @@ if __name__ == '__main__':
                          + " in about " + str(math.ceil(end_j - start_j)/1000)
                          + " seconds.")
         # normalize kernel row
-        kernel_matrix_row_i_normalized = zeros(len(graph_list))
+        kernel_matrix_row_i_normalized = zeros(num_graphs)
         for j, kernel in enumerate(kernel_matrix_row_i):
             kernel_matrix_row_i_normalized[j] = (kernel_matrix_row_i[j]
                                                  / sqrt(diagonal_kernels[i]
                                                         * diagonal_kernels[i]))
         end_i = time.time()
-        logger.debug("computed all kernels for graph " + str(i)
-                     + " in about " + str(math.ceil(end_j - start_j) / 1000)
-                     + " seconds.")
-        logger.debug("Based on this value approximately "
-                     + str(math.ceil(((end_j - start_j) / 60000)
-                           * (len(graph_list) - i)))
-                     + " minutes left in total.")
+        logger.info("computed all kernels for graph " + str(i)
+                    + " in about " + str(math.ceil(end_j - start_j) / 1000)
+                    + " seconds.")
+        logger.info("Based on this value approximately "
+                    + str(math.ceil(((end_j - start_j) / 60000)
+                          * (num_graphs - i)))
+                    + " minutes left in total.")
 
         # write out normalized kernel row
         output_line = get_output_line_from_vector(
