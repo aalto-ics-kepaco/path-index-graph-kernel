@@ -143,6 +143,7 @@ if __name__ == '__main__':
             if reaction_read and ecnumbers_read:
                 reaction_read = False
                 ecnumbers_read = False
+                reaction_found = False
 
                 # iterate over reactions in graphs directory
                 for listed_reaction in reaction_list:
