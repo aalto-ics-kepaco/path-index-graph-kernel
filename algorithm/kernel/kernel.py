@@ -1,5 +1,5 @@
-# Extracts feature map Phi and the kernel matrix K from tbwt results
-# that can be used as input for MMCRF
+# Extracts feature map Phi (optionally) and the kernel matrix K from tbwt 
+# results that can be used as input for MMCRF or other classifiers
 #
 # @author Clemens Westrup
 
