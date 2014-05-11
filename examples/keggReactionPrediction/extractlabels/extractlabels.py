@@ -160,9 +160,8 @@ if __name__ == '__main__':
                         # add ec numbers to set of unique ec codes
                         for ec in ecnumbers:
                             eccodes.add(ec)
-                    if reaction_found:
-                        reactions_found += 1
-                    reaction_found = False
+                if reaction_found:
+                    reactions_found += 1
 
      # convert unique ec-codes to sorted list
     sorted_ecs = sorted(list(eccodes))
