@@ -154,16 +154,17 @@ if __name__ == '__main__':
                     # listed_reaction would be R00258_0_b.mol
                     # where R00258_0_b is stored
                     if (re.match(reaction, listed_reaction_basename)):
-                        reactions_found += 1
+                        reaction_found = True
                         reactiondir[listed_reaction_basename] = ecnumbers
                         # add ec numbers to set of unique ec codes
                         for ec in ecnumbers:
                             eccodes.add(ec)
+                    if reaction_found:
+                        reactions_found += 1
+                    reaction_found = False
 
      # convert unique ec-codes to sorted list
     sorted_ecs = sorted(list(eccodes))
-
-    logger.debug(sorted_ecs)
 
     logger.info("found " + str(reactions_found)
                 + " reactions out of " + str(reactions_total))

@@ -1,0 +1,16 @@
+function [ ] = calculate_kernels(input_file_features, output_file_kernels)
+
+    % normalization function
+    normalize = @(K) K ./ sqrt(diag(K)*diag(K)');
+
+    % test function
+    validkernel = @(K) max(K(:)) < 1.001 & min(eig(K)) > -0.0001;
+
+    disp('reading path count matrices..');
+
+    features = load(input_file_features);
+    Phi = spconvert(features)
+    K = full(normalize(Phi * Phi'));
+    dlmwrite(output_file_kernels, K, ' ');
+
+end

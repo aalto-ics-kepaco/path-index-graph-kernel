@@ -39,7 +39,7 @@ Prediction of reaction ec numbers using the [KEGG dataset](http://www.genome.jp/
 
 The contained preprocessing script does all of this automatically by running `preprocessing.py [-h] -k KEGGPATH [-v]`. The results will be stored in the `results` directory. 
 
-For the sake of completeness, here are the same steps that if run manually:
+Here are the same steps if run manually:
 
 1. reaction-list: Create KEGG reaction listing with `python reaction-list/extract-reactions.py -k KEGGPATH > RESULTS/kegg-reactions.txt`. 
 2. feature-generator: Create atom features from KEGG mol files using `python generator2011.py KEGGPATH/mol/* -k all --output-dir RESULTS/mol-features/`. The optional parameter k specifies the context size, default is all. There are other optional parameters for this script.
