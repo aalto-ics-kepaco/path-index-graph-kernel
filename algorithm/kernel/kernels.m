@@ -1,4 +1,4 @@
-function [K ] = kernels(input_file_features, output_file_kernels)
+function [ K ] = kernels(input_file_features, output_file_kernels)
 
     % normalization function
     normalize = @(K) K ./ sqrt(diag(K)*diag(K)');
@@ -8,9 +8,18 @@ function [K ] = kernels(input_file_features, output_file_kernels)
     features = load(input_file_features);
     Phi = spconvert(features);
     
-    disp('Computing kernels using cosine distance.');
-
-    K = full(1 - squareform(pdist(Phi,'cosine')));
+    tic
+    
+    % euclidean distance
+    disp('Computing kernels using euclidean distance.');
+    Q=repmat(dot(Phi,Phi,2),1,size(Phi,1));
+    D=sqrt(Q+Q'-2*Phi*Phi');
+    
+    toc
+    
+    scaledD = (D-min(D(:))) ./ (max(D(:)-min(D(:))));
+    
+    K = full(1- scaledD);
 
     dlmwrite(output_file_kernels, K, ' ');
 
