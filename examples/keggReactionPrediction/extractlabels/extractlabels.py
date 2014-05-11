@@ -29,7 +29,7 @@ def parseargs():
         action='store_true', help='Ignore incomplete ec-labels like 1.3.2.-')
     parser.add_argument(
         '-d', '--depth', dest='depth', type=int, default=4,
-        help='Depth of EC hierarchy level, 1 for only keeping the top level'
+        help='Depth of EC hierarchy level, 1 for only keeping the top level '
              + 'e.g. EC 1 up tp 4 for keeping the whole tree e.g. EC 1.4.2.23')
     parser.add_argument(
         '-v', '--verbose', dest='verbose', action='store_true',
