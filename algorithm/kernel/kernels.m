@@ -15,11 +15,11 @@ function [ K ] = kernels(input_file_features, output_file_kernels)
     Q=repmat(dot(Phi,Phi,2),1,size(Phi,1));
     D=sqrt(Q+Q'-2*Phi*Phi');
     
-    toc
-    
     scaledD = (D-min(D(:))) ./ (max(D(:)-min(D(:))));
     
     K = full(1- scaledD);
+    
+    toc
 
     dlmwrite(output_file_kernels, K, ' ');
 

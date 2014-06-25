@@ -3,22 +3,30 @@
 # @author Clemens Westrup
 
 import argparse
-import os, errno, shutil, sys
+import os
+import errno
+import shutil
+import sys
 import subprocess
 
-# constants
-maxdepth = 50; # default value used in the paper
+ # default max depth value used in the paper
+maxdepth = 50
+
 
 # parse command line arguments
 def parseargs():
-	parser = argparse.ArgumentParser(description='Runs the indexing .'
-		+ ' Results are stored in folder' + os.path.abspath(outputdir))
-	parser.add_argument('-m', '--maxdepth', type=str, dest='maxdepth', 
-		required=True, help='maximal tree depth')
-	parser.add_argument('-v', '--verbose', dest='verbose', action='store_true',
-		help='show verbose information')
-	args = parser.parse_args()
-	return args
+    parser = argparse.ArgumentParser(
+        description='Runs the indexing .'
+        + ' Results are stored in folder' + os.path.abspath(outputdir))
+    parser.add_argument(
+        '-m', '--maxdepth', type=str, dest='maxdepth',
+        required=True, help='maximal tree depth')
+    parser.add_argument(
+        '-v', '--verbose', dest='verbose', action='store_true',
+        help='show verbose information')
+    args = parser.parse_args()
+    return args
+
 
 # mkdir -p
 def mkdir_p(path):
@@ -27,19 +35,20 @@ def mkdir_p(path):
     except OSError as exc:
         if exc.errno == errno.EEXIST and os.path.isdir(path):
             pass
-        else: raise
+        else:
+            raise
 
 # main function
 if __name__ == '__main__':
 
-	# parse arguments
-	args = parseargs()
-	maxdepth = args.maxdepth
+    # parse arguments
+    args = parseargs()
+    maxdepth = args.maxdepth
 
 
 #### trie-generator
 
-# TrieGenerator.java converts reactiongraph .mol files into .seqs 
+# TrieGenerator.java converts reactiongraph .mol files into .seqs
 # files listing all the paths with a specified depth
 java TrieGenerator maxdepth dir/with/reactiongraph-mol-files/*.mol
 

@@ -22,6 +22,11 @@ def parseargs():
         required=True, help='path to directory containing used kegg '
         'graphs as input for tbwt')
     parser.add_argument(
+        '-e', '--eccodes', type=str, dest='eccodesfile',
+        required=False, help='File containing a list with eccodes. If '
+        'provided it will be used to create the targets file in the order  '
+        'of this list and the labels file will equal the provided list')
+    parser.add_argument(
         '-o', '--output', type=str, dest='output',
         required=True, help='path to directory to store output result')
     parser.add_argument(
@@ -84,24 +89,32 @@ if __name__ == '__main__':
         logger.setLevel(logging.DEBUG)
 
     # prepare output
+    check_output(os.path.abspath(args.output + "/targets"), args.force)
     check_output(os.path.abspath(args.output + "/labels"), args.force)
     check_output(os.path.abspath(args.output + "/graphlist.txt"), args.force)
-
-    # dictionary to store output and set for unique ec-codes
-    reactiondir = {}
-    eccodes = set()
-
-    # read all reactiongraphs
-    reaction_list = sorted(os.listdir(rgrapgsdir))
-
-    logger.debug("reactionlist: ")
-    logger.debug(reaction_list)
 
     # ec-code search pattern
     if (args.ignoreincomplete):
         ecpattern = r"((?:(?:\d+)\.){3}(?:\d+))"
     else:
         ecpattern = r"((?:(?:\d+|-)\.){3}(?:\d+|-))"
+
+    # dictionary to store output
+    reactiondir = {}
+    # if eccodes file provided use this,
+    # otherwiese create empty set for unique ec-codes
+    try:
+        eccodes = set(line.strip() for line in open(args.eccodesfile))
+        # TODO: verify that the specified depth
+        # and the depth in the file are consistent
+    except TypeError:
+        eccodes = set()
+
+    # read all reactiongraphs
+    reaction_list = sorted(os.listdir(rgrapgsdir))
+
+    logger.debug("reactionlist: ")
+    logger.debug(reaction_list)
 
     # process kegg reactions file
     with open(keggpath + '/reaction', 'r') as infile:
@@ -159,20 +172,34 @@ if __name__ == '__main__':
                         reactiondir[listed_reaction_basename] = ecnumbers
                         # add ec numbers to set of unique ec codes
                         for ec in ecnumbers:
+                            # TODO: if eccodes are provided, check if the code
+                            # exists in the list (and throw an error if not)
+                            # instead of just adding it
                             eccodes.add(ec)
                 if reaction_found:
                     reactions_found += 1
 
-     # convert unique ec-codes to sorted list
+    # convert set of unique ec-codes to a list and sort them.
     sorted_ecs = sorted(list(eccodes))
+
+    # write them out into labels file
+    with open(args.output + "/labels", 'w') as output:
+        output.write('\n'.join(sorted_ecs))
 
     logger.info("found " + str(reactions_found)
                 + " reactions out of " + str(reactions_total))
-    logger.info("extracted " + str(len(sorted_ecs))
-                + " unique ec-codes from found reactions")
+    try:
+        args.eccodesfile
+        logger.info("Extracted " + str(len(sorted_ecs))
+                    + " unique ec-codes from provided file to '"
+                    + args.output + "/labels'")
+    except NameError:
+        logger.info("Extracted " + str(len(sorted_ecs))
+                    + " unique ec-codes from found reactions to '"
+                    + args.output + "/labels'")
 
     # write output file
-    with open(args.output + "/labels", 'w') as outfile:
+    with open(args.output + "/targets", 'w') as outfile:
         with open(args.output + "/graphlist.txt", 'w') as graphlist_output:
             for reaction in sorted(reactiondir):
                 logger.debug("found reaction " + reaction + " with ec-codes:")
