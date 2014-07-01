@@ -213,10 +213,19 @@ if __name__ == '__main__':
                 # write line with binary vector for graph
                 # with eccodes as labels
                 for ec in sorted_ecs:
-                    if ec in reactiondir[reaction]:
-                        output_line += "1 "
-                        logger.debug(ec)
-                    else:
-                        output_line += "0 "
+                    for reactionec in reactiondir[reaction]:
+                        # go through each depth level of ec hierarchy and
+                        # check if the ec code matches
+                        ecActive = False
+                        for n in range(args.depth):
+                            if ec == reactionec.rsplit(".", n)[0]:
+                                ecActive = True
+                        # if the ec code matched at some level or is the root
+                        # node R then write a 1, otherwise 0
+                        if ecActive or ec == "R":
+                            logger.debug(ec)
+                            output_line += "1 "
+                        else:
+                            output_line += "0 "
                 output_line = output_line[:-1] + "\n"
                 outfile.write(output_line)
